@@ -68,16 +68,20 @@ AuthService auth = AuthSevice();
         showInSnackBar('${e.toString()}', context);
       }
     }
-
-
-
-
-
-
-
-
-
-
-
+    loading = false;
+    notifyListeners();
+  }
+  setEmail(val) {
+    email = val;
+    notifyListeners();
+  }
+  setPassword(val) {
+    password = val;
+    notifyListeners();
+  }
+  void showInSnackBar(String value,context) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+  }
 
   }
