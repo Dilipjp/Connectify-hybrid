@@ -21,7 +21,14 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+body: Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Image.asset('assets/images/splashscreen.jpeg',height: 100,)
+    ],
+  ),
+),
 
     );
   }
