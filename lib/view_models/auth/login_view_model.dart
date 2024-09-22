@@ -50,7 +50,24 @@ AuthService auth = AuthSevice();
       notifyListeners();
       }
   }
-
+  forgotPassword(BuildContext context) async {
+    loading = true;
+    notifyListeners();
+    FormState form = formKey.currentState!;
+    form.save();
+    print(Validations.validateEmail(email));
+    if (Validations.validateEmail(email) != null) {
+      showInSnackBar('Please enter valid email to reset your password.',context);
+    }
+    else {
+      try {
+        await auth.forgotPassword(email!);
+        showInSnackBar('Please check your email  '
+            'to reset your password', context);
+      } catch (e) {
+        showInSnackBar('${e.toString()}', context);
+      }
+    }
 
 
 
