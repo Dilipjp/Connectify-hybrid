@@ -24,57 +24,170 @@ class _LoginState extends State<Login> {
       progressIndicator: circularProgress(context),
       isLoading: viewModel.loading,
       child: Scaffold(
-         backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         key: viewModel.scaffoldKey,
         body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 20.0),
-children: [
-SizedBox(height: MediaQuery.of(context).size.height / 5),
-  Container(
-    height: 170.0,
-width: MediaQuery.of(context).size.width,
-child: Image.asset('assets/images/login.png'
-),
-  ),
-  SizedBox(height: 10.0),
-Center(
-  child: Text(
-    'Welcome back!',
-    style: TextStyle(
-      fontSize: 23.0,
-      fontWeight: FontWeight.w900,
-    ),
-  ),
-),
-  Center(
-    child: Text(
-      'Log into your account and get started!',
-      style: TextStyle(
-        fontSize: 12.0,
-        fontWeight: FontWeight.w300,
-        color: Theme.of(context).colorScheme.secondary,
-      ),
-    ),
-  ),
-      SizedBox(height: 25.0),
-      buildForm(context, viewModel),
-      SizedBox(height: 10.0),
-      Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
           children: [
-          Text('Don\'t have an account?'),
-      SizedBox(width: 5.0),
-      GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (_) => Register(),
+            SizedBox(height: MediaQuery
+                .of(context)
+                .size
+                .height / 5),
+            Container(
+              height: 170.0,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              child: Image.asset('assets/images/login.png'
+              ),
             ),
-          );
-        },
-],
-        ),
+            SizedBox(height: 10.0),
+            Center(
+              child: Text(
+                'Welcome back!',
+                style: TextStyle(
+                  fontSize: 23.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                'Log into your account!',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w300,
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .secondary,
+                ),
+              ),
+            ),
+            SizedBox(height: 25.0),
+            buildForm(context, viewModel),
+            SizedBox(height: 10.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Don\'t have an account?'),
+                SizedBox(width: 5.0),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => Register(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .secondary,
+                    ),
+                  ),
+                ),
 
+              ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  buildForm(BuildContext context, LoginViewModel viewModel) {
+    return Form(
+      key: viewModel.formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
+        children: [
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.mail_outline,
+            hintText: "Email",
+            textInputAction: TextInputAction.next,
+            validateFunction: Validations.validateEmail,
+            onSaved: (String val) {
+              viewModel.setEmail(val);
+            },
+            focusNode: viewModel.emailFN,
+            nextFocusNode: viewModel.passFN,
+          ),
+          SizedBox(height: 15.0),
+          PasswordFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.lock_closed_outline,
+            suffix: Ionicons.eye_outline,
+            hintText: "Password",
+            textInputAction: TextInputAction.done,
+            validateFunction: Validations.validatePassword,
+            submitAction: () => viewModel.login(context),
+            obscureText: true,
+            onSaved: (String val) {
+              viewModel.setPassword(val);
+            },
+            focusNode: viewModel.passFN,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: InkWell(
+                onTap: () => viewModel.forgotPassword(context),
+                child: Container(
+                  width: 130,
+                  height: 40,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 10.0),
+          Container(
+            height: 45.0,
+            width: 180.0,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  Theme
+                      .of(context)
+                      .colorScheme
+                      .secondary,
+                ),
+              ),
+              // highlightElevation: 4.0,
+              child: Text(
+                'Log in'.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onPressed: () => viewModel.login(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   }
