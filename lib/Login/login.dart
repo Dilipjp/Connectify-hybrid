@@ -45,7 +45,33 @@ Center(
       fontWeight: FontWeight.w900,
     ),
   ),
-)
+),
+  Center(
+    child: Text(
+      'Log into your account and get started!',
+      style: TextStyle(
+        fontSize: 12.0,
+        fontWeight: FontWeight.w300,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+    ),
+  ),
+      SizedBox(height: 25.0),
+      buildForm(context, viewModel),
+      SizedBox(height: 10.0),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          Text('Don\'t have an account?'),
+      SizedBox(width: 5.0),
+      GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) => Register(),
+            ),
+          );
+        },
 ],
         ),
 
