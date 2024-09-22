@@ -10,3 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginViewModel extends ChangeNotifier {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+bool validate = false;
+bool loading  = false ;
+Stream? email,password;
+FocusNode emailFN = FocusNode();
+FocusNode passFN = FocusNode();
+AuthService auth = AuthSevice();
