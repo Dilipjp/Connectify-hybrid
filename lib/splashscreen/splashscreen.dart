@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 
+
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
 
@@ -31,7 +32,6 @@ body: Center(
     ],
   ),
 ),
-
     );
   }
 }
