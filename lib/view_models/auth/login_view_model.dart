@@ -16,3 +16,51 @@ Stream? email,password;
 FocusNode emailFN = FocusNode();
 FocusNode passFN = FocusNode();
 AuthService auth = AuthSevice();
+
+  login(BuildContext context) async {
+    FormState form = formKey.currentState!;
+    form.save();
+
+    if (!form.validate()) {
+      validate = true;
+      notifyListeners();
+      showInSnackBar('Fill all the feilds',context);
+    }
+    else {
+      loading = true;
+      notifyListeners();
+      try {
+        bool success = await auth.loginUser(
+          email: email,
+          password: password,
+        );
+        print(success);
+        if (success) {
+          Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(builder: (_) => TabScreen()));
+        }
+      }
+      catch (e) {
+        loading = false;
+        notifyListeners();
+        print(e);
+        showInSnackBar('${auth.handleFirebaseAuthError(e.toString() as FirebaseAuthException)}',context);
+      }
+      loading = false;
+      notifyListeners();
+      }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
