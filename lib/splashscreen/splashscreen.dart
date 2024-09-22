@@ -25,7 +25,9 @@ body: Center(
   child: Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      Image.asset('assets/images/splashscreen.jpeg',height: 100,)
+      Image.asset('assets/images/splashscreen.jpeg',height: 100,),
+      SizedBox(height: 20),
+      CircularProgressIndicator(),
     ],
   ),
 ),
