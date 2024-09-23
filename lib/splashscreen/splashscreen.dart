@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import '../screens/landing_page.dart';
+import '../screens/mainscreen.dart';
+
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
 
