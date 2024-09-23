@@ -96,4 +96,58 @@ class _RegisterState extends State<Register> {
     nextFocusNode: viewModel.emailFN,
     ),
     SizedBox(height: 20.0),
+
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: "email",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setEmail(val);
+    },
+    focusNode: viewModel.emailFN,
+    nextFocusNode: viewModel.passwordFN,
+    ),
+    SizedBox(height: 20.0),
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: "password",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setPassword(val);
+    },
+    focusNode: viewModel.passwordFN,
+    nextFocusNode: viewModel.cPasswordFN,
+    ),
+    SizedBox(height: 20.0),
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: "confirm password",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setConfirmPass(val);
+    },
+    focusNode: viewModel.cPasswordFN,
+    nextFocusNode: viewModel.countryFN,
+    ),
+    SizedBox(height: 20.0),
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: " country ",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setCountry(val);
+    },
+    focusNode: viewModel.countryFN,
+    nextFocusNode: viewModel.genderFN,
+    ),
+    SizedBox(height: 20.0),
+
 }
