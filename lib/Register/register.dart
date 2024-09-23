@@ -149,5 +149,65 @@ class _RegisterState extends State<Register> {
     nextFocusNode: viewModel.genderFN,
     ),
     SizedBox(height: 20.0),
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: " gender ",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setGender(val);
+    },
+    focusNode: viewModel.genderFN,
+    nextFocusNode: viewModel.phnumFN,
+    ),
+    SizedBox(height: 20.0),
+
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: " Your phone num ",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setPhoneNum(val);
+    },
+    focusNode: viewModel.phnumFN,
+    ),
+    SizedBox(height: 20.0),
+          Container(
+            height: 45.0,
+            width: 180.0,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Theme.of(context).colorScheme.secondary),
+              ),
+              child: Text(
+                'sign up'.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onPressed: () async {
+                bool isRegistered = await viewModel.register(context);
+                if (isRegistered) {
+                  Navigator.pop(context);
+                }
+              },
+
+            ),
+          ),
+        ],
+        ),
+    );
+  }
 
 }
