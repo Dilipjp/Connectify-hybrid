@@ -4,6 +4,7 @@ import 'package:connectify/components/custom_card.dart';
 
 
 class TextFormBuilder extends StatefulWidget {
+
   final String? initialValue;
   final bool? enabled;
   final String? hintText;
@@ -18,6 +19,24 @@ class TextFormBuilder extends StatefulWidget {
   final Key? key;
   final IconData? prefix;
   final IconData? suffix;
+
+  const TextFormBuilder({
+    this.initialValue,
+    this.enabled,
+    this.hintText,
+    this.textInputType,
+    this.controller,
+    this.textInputAction,
+    required this.obscureText,
+    this.focusNode,
+    this.nextFocusNode,
+    this.submitAction,
+    this.validateFunction,
+    this.onSaved,
+    this.onChange,
+    this.key,
+    this.prefix,
+    this.suffix});
 
 
   @override
@@ -139,3 +158,29 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
       ),
     );
   }
+
+
+  border(BuildContext context) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(30.0),
+      ),
+      borderSide: BorderSide(
+        color: Colors.white,
+        width: 0.0,
+      ),
+    );
+  }
+
+  focusBorder(BuildContext context) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(30.0),
+      ),
+      borderSide: BorderSide(
+        color: Theme.of(context).colorScheme.secondary,
+        width: 1.0,
+      ),
+    );
+  }
+}
