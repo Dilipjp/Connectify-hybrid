@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:connectify/splashscreen/splashscreen.dart';
 import 'package:provider/provider.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -41,32 +42,13 @@ class _MyAppState extends State<MyApp> {
             theme: themeData(
               notifier.dark ? Constants.darkTheme : Constants.lightTheme,
             ),
-            home: SplashScreen(),
+            home: Splashscreen(),
           );
         },
       ),
     );
   }
-  class AuthWrapper extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-  return StreamBuilder<User?>(
-  stream: FirebaseAuth.instance.authStateChanges(),
-  builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-  if (snapshot.connectionState == ConnectionState.active) {
-  if (snapshot.hasData) {
-  return TabScreen();
-  } else {
-  return Landing();
-  }
-  }
-  return Scaffold(
-  body: Center(child: CircularProgressIndicator()),
-  );
-  },
-  );
-  }
-  }
+
 
   ThemeData themeData(ThemeData theme) {
     return theme.copyWith(

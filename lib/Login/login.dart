@@ -117,7 +117,7 @@ class _LoginState extends State<Login> {
               viewModel.setEmail(val);
             },
             focusNode: viewModel.emailFN,
-            nextFocusNode: viewModel.passFN,
+            nextFocusNode: viewModel.passFN, obscureText: true,
           ),
           SizedBox(height: 15.0),
           PasswordFormBuilder(

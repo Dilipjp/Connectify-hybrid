@@ -6,6 +6,10 @@ import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
+import '../components/text_form_builder.dart';
+import '../utils/validation.dart';
+import '../widgets/indicators.dart';
+
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -79,7 +83,7 @@ class _RegisterState extends State<Register> {
       viewModel.setFname(val);
     },
     focusNode: viewModel.FirstnameFN,
-    nextFocusNode: viewModel.LastnameFN,
+    nextFocusNode: viewModel.LastnameFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
 
@@ -93,7 +97,7 @@ class _RegisterState extends State<Register> {
     viewModel.setLname(val);
     },
     focusNode: viewModel.FirstnameFN,
-    nextFocusNode: viewModel.emailFN,
+    nextFocusNode: viewModel.emailFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
 
@@ -107,7 +111,7 @@ class _RegisterState extends State<Register> {
     viewModel.setEmail(val);
     },
     focusNode: viewModel.emailFN,
-    nextFocusNode: viewModel.passwordFN,
+    nextFocusNode: viewModel.passwordFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
     TextFormBuilder(
@@ -120,7 +124,7 @@ class _RegisterState extends State<Register> {
     viewModel.setPassword(val);
     },
     focusNode: viewModel.passwordFN,
-    nextFocusNode: viewModel.cPasswordFN,
+    nextFocusNode: viewModel.cPasswordFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
     TextFormBuilder(
@@ -133,7 +137,7 @@ class _RegisterState extends State<Register> {
     viewModel.setConfirmPass(val);
     },
     focusNode: viewModel.cPasswordFN,
-    nextFocusNode: viewModel.countryFN,
+    nextFocusNode: viewModel.countryFN, obscureText: true,
     ),
     SizedBox(height: 20.0),
     TextFormBuilder(
@@ -146,7 +150,7 @@ class _RegisterState extends State<Register> {
     viewModel.setCountry(val);
     },
     focusNode: viewModel.countryFN,
-    nextFocusNode: viewModel.genderFN,
+    nextFocusNode: viewModel.genderFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
     TextFormBuilder(
@@ -159,7 +163,7 @@ class _RegisterState extends State<Register> {
     viewModel.setGender(val);
     },
     focusNode: viewModel.genderFN,
-    nextFocusNode: viewModel.phnumFN,
+    nextFocusNode: viewModel.phnumFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
 
@@ -172,7 +176,7 @@ class _RegisterState extends State<Register> {
     onSaved: (String val) {
     viewModel.setPhoneNum(val);
     },
-    focusNode: viewModel.phnumFN,
+    focusNode: viewModel.phnumFN, obscureText: false,
     ),
     SizedBox(height: 20.0),
           Container(
