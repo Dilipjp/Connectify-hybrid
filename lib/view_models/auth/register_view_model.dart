@@ -62,4 +62,44 @@ class Registration extends ChangeNotifier {
     }
   }
 
+  setFname(val) {
+    Firstname = val;
+    notifyListeners();
+  }
+  setLname(val) {
+    LastName = val;
+    notifyListeners();
+  }
+  setEmail(val) {
+    email = val;
+    notifyListeners();
+  }
+
+  setPassword(val) {
+    password = val;
+    notifyListeners();
+  }
+  setConfirmPass(val) {
+    cPassword = val;
+    notifyListeners();
+  }
+
+  setCountry(val) {
+    country = val;
+    notifyListeners();
+  }
+  setGender(val) {
+    gender = val;
+    notifyListeners();
+  }
+  setPhoneNum(val) {
+    phnum = val;
+    notifyListeners();
+  }
+
+  void showInSnackBar(String value, context) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+  }
+
 }
