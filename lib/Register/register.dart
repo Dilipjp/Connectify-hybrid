@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:connectify/view_models/auth/register_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,61 @@ class _RegisterState extends State<Register> {
       buildForm(viewModel, context),
       SizedBox(height: 30.0),
 
-
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Already have an account  ',
+          ),
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Text(
+              'Login',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+        ],
+    ),
+    ),
     );
   }
+
+  buildForm(RegisterViewModel viewModel, BuildContext context) {
+    return Form(
+        key: viewModel.formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+        children: [
+        TextFormBuilder(
+        enabled: !viewModel.loading,
+        prefix: Ionicons.person_outline,
+        hintText: "Firstname",
+        textInputAction: TextInputAction.next,
+        validateFunction: Validations.validateName,
+        onSaved: (String val) {
+      viewModel.setFname(val);
+    },
+    focusNode: viewModel.FirstnameFN,
+    nextFocusNode: viewModel.LastnameFN,
+    ),
+    SizedBox(height: 20.0),
+
+    TextFormBuilder(
+    enabled: !viewModel.loading,
+    prefix: Ionicons.person_outline,
+    hintText: "Lastname",
+    textInputAction: TextInputAction.next,
+    validateFunction: Validations.validateName,
+    onSaved: (String val) {
+    viewModel.setLname(val);
+    },
+    focusNode: viewModel.FirstnameFN,
+    nextFocusNode: viewModel.emailFN,
+    ),
+    SizedBox(height: 20.0),
 }
