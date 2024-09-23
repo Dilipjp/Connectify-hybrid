@@ -38,3 +38,11 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     onTap: () {
     print('clicked');
     },
+      borderRadius: BorderRadius.circular(40.0),
+      child: Container(
+          child: Theme(
+          data: ThemeData(
+          primaryColor: Theme.of(context).colorScheme.secondary,
+      colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: Theme.of(context).colorScheme.secondary),
+    ),
