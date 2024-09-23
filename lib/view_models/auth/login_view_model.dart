@@ -55,8 +55,8 @@ AuthService auth = AuthSevice();
     notifyListeners();
     FormState form = formKey.currentState!;
     form.save();
-    print(Validations.validateEmail(email));
-    if (Validations.validateEmail(email) != null) {
+    print(Validations.validateEmail(email as String?));
+    if (Validations.validateEmail(email as String?) != null) {
       showInSnackBar('Please enter valid email to reset your password.',context);
     }
     else {

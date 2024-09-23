@@ -1,3 +1,4 @@
+import 'package:connectify/view_models/theme/theme_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:connectify/components/life_cycle_event_handler.dart';
@@ -27,9 +28,6 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-
-
-  @override
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -37,7 +35,7 @@ class _MyAppState extends State<MyApp> {
       child: Consumer<ThemeProvider>(
         builder: (context, ThemeProvider notifier, Widget? child) {
           return MaterialApp(
-            title:"Connectify App",
+            title: "Connectify App",
             debugShowCheckedModeBanner: false,
             theme: themeData(
               notifier.dark ? Constants.darkTheme : Constants.lightTheme,
@@ -49,12 +47,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+    ThemeData themeData(ThemeData theme) {
+      return theme.copyWith(
+        textTheme: GoogleFonts.nunitoTextTheme(
+          theme.textTheme,
+        ),
+      );
+    }
 
-  ThemeData themeData(ThemeData theme) {
-    return theme.copyWith(
-      textTheme: GoogleFonts.nunitoTextTheme(
-        theme.textTheme,
-      ),
-    );
-  }
 }
