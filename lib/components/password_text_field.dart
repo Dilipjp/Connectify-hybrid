@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:social_media_app/components/custom_card.dart';
+import 'package:connectify/components/custom_card.dart';
 
 class PasswordFormBuilder extends StatefulWidget {
   final String? initialValue;
