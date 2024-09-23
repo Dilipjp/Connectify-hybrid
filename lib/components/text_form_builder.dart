@@ -46,3 +46,27 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
       colorScheme: ColorScheme.fromSwatch().copyWith(
           secondary: Theme.of(context).colorScheme.secondary),
     ),
+    child: TextFormField(
+    cursorColor: Theme.of(context).colorScheme.secondary,
+    textCapitalization: TextCapitalization.none,
+    initialValue: widget.initialValue,
+    enabled: widget.enabled,
+    onChanged: (val) {
+    error = widget.validateFunction!(val);
+    setState(() {});
+    widget.onSaved!(val);
+    },
+style: TextStyle(
+fontSize:15.0,
+    ),
+key: widget.key,
+    controller: widget.controller,
+obscureText: widget.obscureText,
+keyboardType: widget.textInputType,
+validator: widget.validateFunction,
+onSaved: (val){
+    error =widget.validateFunction!(val);
+    setState(() {});
+    widget.onSaved !(val!);
+    },
+  },
