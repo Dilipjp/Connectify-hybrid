@@ -30,43 +30,112 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    CustomCard(
-    onTap: () {
-    print('clicked');
-    },
-      borderRadius: BorderRadius.circular(40.0),
-      child: Container(
-          child: Theme(
-          data: ThemeData(
-          primaryColor: Theme.of(context).colorScheme.secondary,
-      colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Theme.of(context).colorScheme.secondary),
-    ),
-    child: TextFormField(
-    cursorColor: Theme.of(context).colorScheme.secondary,
-    textCapitalization: TextCapitalization.none,
-    initialValue: widget.initialValue,
-    enabled: widget.enabled,
-    onChanged: (val) {
-    error = widget.validateFunction!(val);
-    setState(() {});
-    widget.onSaved!(val);
-    },
-style: TextStyle(
-fontSize:15.0,
-    ),
-key: widget.key,
-    controller: widget.controller,
-obscureText: widget.obscureText,
-keyboardType: widget.textInputType,
-validator: widget.validateFunction,
-onSaved: (val){
-    error =widget.validateFunction!(val);
-    setState(() {});
-    widget.onSaved !(val!);
-    },
-  },
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomCard(
+            onTap: () {
+              print('clicked');
+            },
+            borderRadius: BorderRadius.circular(40.0),
+            child: Container(
+              child: Theme(
+                data: ThemeData(
+                  primaryColor: Theme
+                      .of(context)
+                      .colorScheme
+                      .secondary,
+                  colorScheme: ColorScheme.fromSwatch().copyWith(
+                      secondary: Theme
+                          .of(context)
+                          .colorScheme
+                          .secondary),
+                ),
+                child: TextFormField(
+                  cursorColor: Theme
+                      .of(context)
+                      .colorScheme
+                      .secondary,
+                  textCapitalization: TextCapitalization.none,
+                  initialValue: widget.initialValue,
+                  enabled: widget.enabled,
+                  onChanged: (val) {
+                    error = widget.validateFunction!(val);
+                    setState(() {});
+                    widget.onSaved!(val);
+                  },
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                  key: widget.key,
+                  controller: widget.controller,
+                  obscureText: widget.obscureText,
+                  keyboardType: widget.textInputType,
+                  validator: widget.validateFunction,
+                  onSaved: (val) {
+                    error = widget.validateFunction!(val);
+                    setState(() {});
+                    widget.onSaved !(val!);
+                  },
+                  textInputAction: widget.textInputAction,
+                  focusNode: widget.focusNode,
+                  onFieldSubmitted: (String term) {
+                    if (widget.nextFocusNode != null) {
+                      widget.focusNode!.unfocus();
+                      FocusScope.of(context).requestFocus(widget.nextFocusNode);
+                    } else {
+                      widget.submitAction!();
+                    }
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      widget.prefix,
+                      size: 15.0,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .secondary,
+                    ),
+                    suffixIcon: Icon(
+                      widget.suffix,
+                      size: 15.0,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .secondary,
+                    ),
+                    // fillColor: Colors.white,
+                    filled: true,
+                    hintText: widget.hintText,
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                    border: border(context),
+                    enabledBorder: border(context),
+                    focusedBorder: focusBorder(context),
+                    errorStyle: TextStyle(height: 0.0, fontSize: 0.0),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 5.0),
+          Visibility(
+            visible: error != null,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                '$error',
+                style: TextStyle(
+                  color: Colors.red[700],
+                  fontSize: 12.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
