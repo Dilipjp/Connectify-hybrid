@@ -18,3 +18,23 @@ class TextFormBuilder extends StatefulWidget {
   final Key? key;
   final IconData? prefix;
   final IconData? suffix;
+
+
+  @override
+  _TextFormBuilderState createState() => _TextFormBuilderState();
+}
+
+class _TextFormBuilderState extends State<TextFormBuilder> {
+  String? error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    CustomCard(
+    onTap: () {
+    print('clicked');
+    },
