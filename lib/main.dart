@@ -1,3 +1,5 @@
+import 'package:connectify/utils/constants.dart';
+import 'package:connectify/utils/providers.dart';
 import 'package:connectify/view_models/theme/theme_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
