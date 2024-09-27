@@ -28,7 +28,7 @@ class AuthService {
       password: '$password',
     );
     if (res.user != null) {
-      await saveUserToFirestore(Firstname!,Lastname!,gender!,phnum!, email!, country!);
+      await saveUserToFirestore(Firstname!,Lastname!,gender!,phnum!, res.user!,email!, country!);
       return true;
     } else {
       return false;
@@ -55,3 +55,34 @@ class AuthService {
       email: '$email',
       password: '$password',
     );
+    if (res.user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  forgotPassword(String email) async {
+    await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  logOut() async {
+    await firebaseAuth.signOut();
+  }
+
+  String handleFirebaseAuthError(FirebaseAuthException e) {
+    switch (e.code) {
+    case 'weak-password':
+    return "Password is too weak";
+    case 'invalid-email':
+    return "Invalid Email";
+    case 'email-already-in-use':
+    return "The email address is already in use by another account.";
+    case 'wrong-password':
+    return "Invalid credentials.";
+      default:
+        return e.message ?? "An unknown error occurred.";
+    }
+  }
+
+}
