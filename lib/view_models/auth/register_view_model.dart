@@ -12,7 +12,7 @@ class RegisterViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool validate = false;
   bool loading = false;
-  String? Firstname,LastName,email,country,password,cPassword,phnum,gender;
+  String? Firstname,Lastname,email,country,password,cPassword,phnum,gender;
 
   FocusNode FirstnameFN = FocusNode();
   FocusNode LastnameFN = FocusNode();
@@ -40,7 +40,7 @@ class RegisterViewModel extends ChangeNotifier {
         try {
           bool success = await auth.createUser(
             firstname: Firstname,
-            lastname: LastName,
+            lastname: Lastname,
             email: email,
             password: password,
             country: country,
@@ -68,7 +68,7 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
   }
   setLname(val) {
-    LastName = val;
+    Lastname = val;
     notifyListeners();
   }
   setEmail(val) {
