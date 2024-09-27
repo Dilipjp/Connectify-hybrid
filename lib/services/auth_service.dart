@@ -28,7 +28,7 @@ class AuthService {
       password: '$password',
     );
     if (res.user != null) {
-      await saveUserToFirestore(Firstname!,Lastname!, email!, country!);
+      await saveUserToFirestore(Firstname!,Lastname!,gender!,phnum!, email!, country!);
       return true;
     } else {
       return false;
