@@ -6,6 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
+import '../components/password_text_field.dart';
 import '../components/text_form_builder.dart';
 import '../utils/validation.dart';
 import '../widgets/indicators.dart';
@@ -77,7 +78,6 @@ class _RegisterState extends State<Register> {
         enabled: !viewModel.loading,
         prefix: Ionicons.person_outline,
         hintText: "Firstname",
-        textInputAction: TextInputAction.next,
         validateFunction: Validations.validateName,
         onSaved: (String val) {
       viewModel.setFname(val);
@@ -91,55 +91,58 @@ class _RegisterState extends State<Register> {
     enabled: !viewModel.loading,
     prefix: Ionicons.person_outline,
     hintText: "Lastname",
-    textInputAction: TextInputAction.next,
     validateFunction: Validations.validateName,
     onSaved: (String val) {
     viewModel.setLname(val);
     },
-    focusNode: viewModel.FirstnameFN,
+    focusNode: viewModel.LastnameFN,
     nextFocusNode: viewModel.emailFN, obscureText: false,
     ),
+          SizedBox(height: 20.0),
+
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.mail_outline,
+            hintText: "Email",
+            validateFunction: Validations.validateEmail,
+            onSaved: (String val) {
+              viewModel.setEmail(val);
+            },
+            focusNode: viewModel.emailFN,
+            nextFocusNode: viewModel.countryFN, obscureText: false,
+          ),
     SizedBox(height: 20.0),
 
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: "email",
-    textInputAction: TextInputAction.next,
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setEmail(val);
-    },
-    focusNode: viewModel.emailFN,
-    nextFocusNode: viewModel.passwordFN, obscureText: false,
-    ),
-    SizedBox(height: 20.0),
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: "password",
-    textInputAction: TextInputAction.next,
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setPassword(val);
-    },
-    focusNode: viewModel.passwordFN,
-    nextFocusNode: viewModel.cPasswordFN, obscureText: false,
-    ),
-    SizedBox(height: 20.0),
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: "confirm password",
-    textInputAction: TextInputAction.next,
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setConfirmPass(val);
-    },
-    focusNode: viewModel.cPasswordFN,
-    nextFocusNode: viewModel.countryFN, obscureText: true,
-    ),
-    SizedBox(height: 20.0),
+          PasswordFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.lock_closed_outline,
+            suffix: Ionicons.eye_outline,
+            hintText: "Password",
+           
+            validateFunction: Validations.validatePassword,
+            obscureText: true,
+            onSaved: (String val) {
+              viewModel.setPassword(val);
+            },
+            focusNode: viewModel.passwordFN,
+             nextFocusNode: viewModel.cPasswordFN,
+          ),
+          SizedBox(height: 20.0),
+
+          PasswordFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.lock_open_outline,
+            hintText: "Confirm Password",
+            textInputAction: TextInputAction.done,
+            validateFunction: Validations.validatePassword,
+            submitAction: () => viewModel.register(context),
+            obscureText: true,
+            onSaved: (String val) {
+              viewModel.setConfirmPass(val);
+            },
+            focusNode: viewModel.cPasswordFN,
+          ),
+          SizedBox(height: 25.0),
     TextFormBuilder(
     enabled: !viewModel.loading,
     prefix: Ionicons.person_outline,

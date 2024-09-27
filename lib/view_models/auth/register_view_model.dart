@@ -71,6 +71,7 @@ class RegisterViewModel extends ChangeNotifier {
     Firstname = val;
     notifyListeners();
   }
+
   setLname(val) {
     Lastname = val;
     notifyListeners();

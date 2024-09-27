@@ -22,7 +22,7 @@ class _LandingState extends State<Landing> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
       Image.asset(
-      'assets/images/new1.png',
+      'assets/images/new1.jpeg',
       height: 200.0,
       width: 200.0,
       fit: BoxFit.cover,
