@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "914924731234",
+    "project_id": "connectify-d3ce8",
+    "storage_bucket": "connectify-d3ce8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914924731234:android:fd940de5e75b02b5764a3b",
+        "android_client_info": {
+          "package_name": "com.example.connectify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKZwCF8-1niQp_YLZxRNmD50PcsjAYxu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914924731234:android:f69f16fec046f2ac764a3b",
+        "android_client_info": {
+          "package_name": "com.example.social_media_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKZwCF8-1niQp_YLZxRNmD50PcsjAYxu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914924731234:android:701fc29992316fb7764a3b",
+        "android_client_info": {
+          "package_name": "com.example.testconnectify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKZwCF8-1niQp_YLZxRNmD50PcsjAYxu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

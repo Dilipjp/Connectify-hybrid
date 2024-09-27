@@ -1,4 +1,5 @@
 import 'package:connectify/services/user_service.dart';
+import 'package:connectify/utils/config.dart';
 import 'package:connectify/utils/constants.dart';
 import 'package:connectify/utils/providers.dart';
 import 'package:connectify/view_models/theme/theme_view_model.dart';
@@ -8,10 +9,18 @@ import 'package:connectify/components/life_cycle_event_handler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:connectify/splashscreen/splashscreen.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+import 'firebase_options.dart';
 
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Config.initFirebase(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
