@@ -47,7 +47,7 @@ class _LandingState extends State<Landing> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildButton('LOGIN', context, Login()),
-              _buildButton('SIGN UP', context, Register()), // Replace with your Sign Up page
+              _buildButton('SIGN UP', context, Register()),
             ],
           ),
         ),

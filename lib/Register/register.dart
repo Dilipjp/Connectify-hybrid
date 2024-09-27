@@ -118,7 +118,6 @@ class _RegisterState extends State<Register> {
             prefix: Ionicons.lock_closed_outline,
             suffix: Ionicons.eye_outline,
             hintText: "Password",
-           
             validateFunction: Validations.validatePassword,
             obscureText: true,
             onSaved: (String val) {
@@ -147,7 +146,6 @@ class _RegisterState extends State<Register> {
     enabled: !viewModel.loading,
     prefix: Ionicons.person_outline,
     hintText: " country ",
-    textInputAction: TextInputAction.next,
     validateFunction: Validations.validateName,
     onSaved: (String val) {
     viewModel.setCountry(val);
@@ -160,7 +158,6 @@ class _RegisterState extends State<Register> {
     enabled: !viewModel.loading,
     prefix: Ionicons.person_outline,
     hintText: " gender ",
-    textInputAction: TextInputAction.next,
     validateFunction: Validations.validateName,
     onSaved: (String val) {
     viewModel.setGender(val);
@@ -174,7 +171,6 @@ class _RegisterState extends State<Register> {
     enabled: !viewModel.loading,
     prefix: Ionicons.person_outline,
     hintText: " Your phone num ",
-    textInputAction: TextInputAction.next,
     validateFunction: Validations.validateName,
     onSaved: (String val) {
     viewModel.setPhoneNum(val);
