@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_media_app/models/user.dart';
-import 'package:social_media_app/services/services.dart';
-import 'package:social_media_app/utils/firebase.dart';
+import 'package:connectify/models/user.dart';
+import 'package:connectify/services/services.dart';
+import 'package:connectify/utils/firebase.dart';
 
 class UserService extends Service {
   //get the authenticated uis
