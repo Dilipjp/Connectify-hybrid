@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/firebase.dart';
 
 class AuthService {
-
   final CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
   User getCurrentUser() {
@@ -16,19 +15,19 @@ class AuthService {
   }
   Future<bool> createUser(
       {
-        String? Firstname,
-        String? Lastname,
+        String? firstname,
+        String? lastname,
         String? email,
         String? country,
         String? gender,
         String? phnum,
-        String? password}) async {
+        String? password, }) async {
     var res = await firebaseAuth.createUserWithEmailAndPassword(
       email: '$email',
       password: '$password',
     );
     if (res.user != null) {
-      await saveUserToFirestore(Firstname!,Lastname!,gender!,phnum!, res.user!,email!, country!);
+      await saveUserToFirestore(firstname!,lastname!,gender!,phnum!, res.user!,email!, country!);
       return true;
     } else {
       return false;

@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth_platform_interface/src/firebase_auth_exception.dart';
 import 'package:flutter/foundation.dart';
-import 'package:connectify/services/auth_service.dart';
+
+import '../../services/auth_service.dart';
+
 
 
 class RegisterViewModel extends ChangeNotifier {
@@ -22,6 +24,8 @@ class RegisterViewModel extends ChangeNotifier {
   FocusNode cPasswordFN = FocusNode();
   FocusNode phnumFN = FocusNode();
   FocusNode genderFN = FocusNode();
+  AuthService auth = AuthService();
+
 
   register(BuildContext context) async {
     FormState form = formKey.currentState!;

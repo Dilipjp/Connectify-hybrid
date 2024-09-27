@@ -12,10 +12,10 @@ class LoginViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 bool validate = false;
 bool loading  = false ;
-Stream? email,password;
+String? email,password;
 FocusNode emailFN = FocusNode();
 FocusNode passFN = FocusNode();
-AuthService auth = AuthSevice();
+  AuthService auth = AuthService();
 
   login(BuildContext context) async {
     FormState form = formKey.currentState!;
@@ -61,7 +61,7 @@ AuthService auth = AuthSevice();
     }
     else {
       try {
-        await auth.forgotPassword(email!);
+        await auth.forgotPassword(email! as String);
         showInSnackBar('Please check your email  '
             'to reset your password', context);
       } catch (e) {

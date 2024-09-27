@@ -1,3 +1,4 @@
+import 'package:connectify/services/user_service.dart';
 import 'package:connectify/utils/constants.dart';
 import 'package:connectify/utils/providers.dart';
 import 'package:connectify/view_models/theme/theme_view_model.dart';
