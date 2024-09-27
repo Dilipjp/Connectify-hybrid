@@ -34,3 +34,18 @@ class AuthService {
       return false;
     }
   }
+  saveUserToFirestore(
+      String Firstname, String Lastname, String gender,String phnum, User user, String email, String country) async {
+    await usersRef.doc(user.uid).set({
+      'firstname': Firstname,
+      'lastname' : Lastname,
+      'gender' : gender,
+      'phnum' : phnum,
+      'email': email,
+      'time': Timestamp.now(),
+      'id': user.uid,
+      'country': country,
+      'photoUrl': user.photoURL ?? '',
+
+    });
+  }
