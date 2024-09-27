@@ -49,3 +49,9 @@ class AuthService {
 
     });
   }
+
+  Future<bool> loginUser({String? email, String? password}) async {
+    var res = await firebaseAuth.signInWithEmailAndPassword(
+      email: '$email',
+      password: '$password',
+    );
