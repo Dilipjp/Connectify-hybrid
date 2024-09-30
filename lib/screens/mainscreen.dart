@@ -1,6 +1,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:connectify/components/fab_container.dart';
+import 'package:connectify/pages/notification.dart';
+import 'package:connectify/pages/profile.dart';
+import 'package:connectify/pages/search.dart';
+import 'package:connectify/pages/feeds.dart';
+import 'package:connectify/utils/firebase.dart';
 
 
 class TabScreen extends StatefulWidget {
@@ -12,7 +20,6 @@ class TabScreen extends StatefulWidget {
 
 class _TabScreenState extends State<TabScreen> {
 
-  lass _TabScreenState extends State<TabScreen> {
   int _page = 0;
 
   List pages = [
@@ -56,6 +63,14 @@ class _TabScreenState extends State<TabScreen> {
       Widget child,
       Animation<double> animation,
       Animation<double> secondaryAnimation,
-    )
+    ){
+      return FadeThroughTransition(
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        child: child,
+      );
+    },
+    child: pages[_page]['page'],
+    ),
   }
 }
