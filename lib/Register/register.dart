@@ -12,7 +12,6 @@ import '../components/text_form_builder.dart';
 import '../utils/validation.dart';
 import '../widgets/indicators.dart';
 
-
 class Register extends StatefulWidget {
   const Register({super.key});
 
@@ -21,86 +20,84 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   @override
   Widget build(BuildContext context) {
     RegisterViewModel viewModel = Provider.of<RegisterViewModel>(context);
     return LoadingOverlay(
-        progressIndicator: circularProgress(context),
-    isLoading: viewModel.loading,
-    child: Scaffold(
-    key: viewModel.scaffoldKey,
-    body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
-        children: [
-    SizedBox(height: MediaQuery.of(context).size.height / 10),
-      Text(
-        'Welcome to Connectify\nCreate a new account ',
-        style: GoogleFonts.nunitoSans(
-          fontWeight: FontWeight.bold,
-          fontSize: 25.0,
-        ),
-      ),
-      SizedBox(height: 30.0),
-      buildForm(viewModel, context),
-      SizedBox(height: 30.0),
-
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Already have an account  ',
-          ),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Text(
-              'Login',
-              style: TextStyle(
+      progressIndicator: circularProgress(context),
+      isLoading: viewModel.loading,
+      child: Scaffold(
+        key: viewModel.scaffoldKey,
+        body: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height / 10),
+            Text(
+              'Welcome to Connectify\nCreate a new account ',
+              style: GoogleFonts.nunitoSans(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.secondary,
+                fontSize: 25.0,
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 30.0),
+            buildForm(viewModel, context),
+            SizedBox(height: 30.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Already have an account  ',
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-        ],
-    ),
-    ),
     );
   }
 
   buildForm(RegisterViewModel viewModel, BuildContext context) {
     return Form(
-        key: viewModel.formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: Column(
+      key: viewModel.formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
         children: [
-        TextFormBuilder(
-        enabled: !viewModel.loading,
-        prefix: Ionicons.person_outline,
-        hintText: "Firstname",
-        validateFunction: Validations.validateName,
-        onSaved: (String val) {
-      viewModel.setFname(val);
-    },
-    focusNode: viewModel.FirstnameFN,
-    nextFocusNode: viewModel.LastnameFN, obscureText: false,
-    ),
-    SizedBox(height: 20.0),
-
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: "Lastname",
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setLname(val);
-    },
-    focusNode: viewModel.LastnameFN,
-    nextFocusNode: viewModel.emailFN, obscureText: false,
-    ),
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.person_outline,
+            hintText: "Firstname",
+            validateFunction: Validations.validateName,
+            onSaved: (String val) {
+              viewModel.setFname(val);
+            },
+            focusNode: viewModel.firstnameFN,
+            nextFocusNode: viewModel.lastnameFN,
+            obscureText: false,
+          ),
           SizedBox(height: 20.0),
-
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.person_outline,
+            hintText: "Lastname",
+            validateFunction: Validations.validateName,
+            onSaved: (String val) {
+              viewModel.setLname(val);
+            },
+            focusNode: viewModel.lastnameFN,
+            nextFocusNode: viewModel.emailFN,
+            obscureText: false,
+          ),
+          SizedBox(height: 20.0),
           TextFormBuilder(
             enabled: !viewModel.loading,
             prefix: Ionicons.mail_outline,
@@ -110,10 +107,10 @@ class _RegisterState extends State<Register> {
               viewModel.setEmail(val);
             },
             focusNode: viewModel.emailFN,
-            nextFocusNode: viewModel.countryFN, obscureText: false,
+            nextFocusNode: viewModel.countryFN,
+            obscureText: false,
           ),
-    SizedBox(height: 20.0),
-
+          SizedBox(height: 20.0),
           PasswordFormBuilder(
             enabled: !viewModel.loading,
             prefix: Ionicons.lock_closed_outline,
@@ -125,10 +122,9 @@ class _RegisterState extends State<Register> {
               viewModel.setPassword(val);
             },
             focusNode: viewModel.passwordFN,
-             nextFocusNode: viewModel.cPasswordFN,
+            nextFocusNode: viewModel.confirmPasswordFN,
           ),
           SizedBox(height: 20.0),
-
           PasswordFormBuilder(
             enabled: !viewModel.loading,
             prefix: Ionicons.lock_open_outline,
@@ -140,45 +136,47 @@ class _RegisterState extends State<Register> {
             onSaved: (String val) {
               viewModel.setConfirmPass(val);
             },
-            focusNode: viewModel.cPasswordFN,
+            focusNode: viewModel.confirmPasswordFN,
           ),
           SizedBox(height: 25.0),
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: " country ",
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setCountry(val);
-    },
-    focusNode: viewModel.countryFN,
-    nextFocusNode: viewModel.genderFN, obscureText: false,
-    ),
-    SizedBox(height: 20.0),
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: " gender ",
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setGender(val);
-    },
-    focusNode: viewModel.genderFN,
-    nextFocusNode: viewModel.phnumFN, obscureText: false,
-    ),
-    SizedBox(height: 20.0),
-
-    TextFormBuilder(
-    enabled: !viewModel.loading,
-    prefix: Ionicons.person_outline,
-    hintText: " Your phone num ",
-    validateFunction: Validations.validateName,
-    onSaved: (String val) {
-    viewModel.setPhoneNum(val);
-    },
-    focusNode: viewModel.phnumFN, obscureText: false,
-    ),
-    SizedBox(height: 20.0),
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.person_outline,
+            hintText: "Country",
+            validateFunction: Validations.validateName,
+            onSaved: (String val) {
+              viewModel.setCountry(val);
+            },
+            focusNode: viewModel.countryFN,
+            nextFocusNode: viewModel.genderFN,
+            obscureText: false,
+          ),
+          SizedBox(height: 20.0),
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.person_outline,
+            hintText: "Gender",
+            validateFunction: Validations.validateName,
+            onSaved: (String val) {
+              viewModel.setGender(val);
+            },
+            focusNode: viewModel.genderFN,
+            nextFocusNode: viewModel.phoneNumFN,
+            obscureText: false,
+          ),
+          SizedBox(height: 20.0),
+          TextFormBuilder(
+            enabled: !viewModel.loading,
+            prefix: Ionicons.person_outline,
+            hintText: "Your phone number",
+            validateFunction: Validations.validateName,
+            onSaved: (String val) {
+              viewModel.setPhoneNum(val);
+            },
+            focusNode: viewModel.phoneNumFN,
+            obscureText: false,
+          ),
+          SizedBox(height: 20.0),
           Container(
             height: 45.0,
             width: 180.0,
@@ -193,7 +191,7 @@ class _RegisterState extends State<Register> {
                     Theme.of(context).colorScheme.secondary),
               ),
               child: Text(
-                'sign up'.toUpperCase(),
+                'Sign Up'.toUpperCase(),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 12.0,
@@ -203,22 +201,13 @@ class _RegisterState extends State<Register> {
               onPressed: () async {
                 if (viewModel.formKey.currentState?.validate() ?? false) {
                   viewModel.formKey.currentState?.save();
-                  bool isRegistered = await viewModel.register(context);
-                  if (isRegistered) {
-                    viewModel.formKey.currentState?.reset(); // Reset the form
-                    Navigator.pushReplacement(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (_) => Login(), // Navigate to Login
-                      ),
-                    );
-                  }
+                  await viewModel.register(context); // Call register without expecting a return value
                 }
               },
             ),
           ),
         ],
-        ),
+      ),
     );
   }
 }

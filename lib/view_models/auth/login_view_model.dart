@@ -16,7 +16,6 @@ String? email,password;
 FocusNode emailFN = FocusNode();
 FocusNode passFN = FocusNode();
   AuthService auth = AuthService();
-
   login(BuildContext context) async {
     FormState form = formKey.currentState!;
     form.save();
@@ -24,32 +23,38 @@ FocusNode passFN = FocusNode();
     if (!form.validate()) {
       validate = true;
       notifyListeners();
-      showInSnackBar('Fill all the feilds',context);
+      showInSnackBar('Fill all the fields', context);
+      return; // Early return to prevent further execution
     }
-    else {
-      loading = true;
-      notifyListeners();
-      try {
-        bool success = await auth.loginUser(
-          email: email,
-          password: password,
-        );
-        print(success);
-        if (success) {
-          Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(builder: (_) => TabScreen()));
-        }
+
+
+    if (email == null || password == null) {
+      showInSnackBar('Email and password cannot be empty', context);
+      return; // Early return to prevent further execution
+    }
+
+    loading = true;
+    notifyListeners();
+    try {
+      bool success = await auth.loginUser(
+        email: email!,
+        password: password!,
+      );
+      print(success);
+      if (success) {
+        Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(builder: (_) => TabScreen()));
       }
-      catch (e) {
-        loading = false;
-        notifyListeners();
-        print(e);
-        showInSnackBar('${auth.handleFirebaseAuthError(e.toString() as FirebaseAuthException)}',context);
-      }
+    } catch (e) {
       loading = false;
       notifyListeners();
-      }
+      print(e);
+      showInSnackBar('${auth.handleFirebaseAuthError(e as FirebaseAuthException)}', context);
+    }
+    loading = false;
+    notifyListeners();
   }
+
   forgotPassword(BuildContext context) async {
     loading = true;
     notifyListeners();
