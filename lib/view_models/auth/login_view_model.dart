@@ -8,14 +8,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 class LoginViewModel extends ChangeNotifier {
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 bool validate = false;
 bool loading  = false ;
 String? email,password;
+
 FocusNode emailFN = FocusNode();
 FocusNode passFN = FocusNode();
+
   AuthService auth = AuthService();
+
   login(BuildContext context) async {
     FormState form = formKey.currentState!;
     form.save();
@@ -24,7 +28,7 @@ FocusNode passFN = FocusNode();
       validate = true;
       notifyListeners();
       showInSnackBar('Fill all the fields', context);
-      return; // Early return to prevent further execution
+      return;
     }
 
 
@@ -60,15 +64,14 @@ FocusNode passFN = FocusNode();
     notifyListeners();
     FormState form = formKey.currentState!;
     form.save();
-    print(Validations.validateEmail(email as String?));
+
     if (Validations.validateEmail(email as String?) != null) {
       showInSnackBar('Please enter valid email to reset your password.',context);
     }
     else {
       try {
         await auth.forgotPassword(email! as String);
-        showInSnackBar('Please check your email  '
-            'to reset your password', context);
+        showInSnackBar('Please check your email  ''to reset your password', context);
       } catch (e) {
         showInSnackBar('${e.toString()}', context);
       }
