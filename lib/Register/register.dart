@@ -6,6 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
+import '../Login/login.dart';
 import '../components/password_text_field.dart';
 import '../components/text_form_builder.dart';
 import '../utils/validation.dart';
@@ -200,17 +201,24 @@ class _RegisterState extends State<Register> {
                 ),
               ),
               onPressed: () async {
-                bool isRegistered = await viewModel.register(context);
-                if (isRegistered) {
-                  Navigator.pop(context);
+                if (viewModel.formKey.currentState?.validate() ?? false) {
+                  viewModel.formKey.currentState?.save();
+                  bool isRegistered = await viewModel.register(context);
+                  if (isRegistered) {
+                    viewModel.formKey.currentState?.reset(); // Reset the form
+                    Navigator.pushReplacement(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (_) => Login(), // Navigate to Login
+                      ),
+                    );
+                  }
                 }
               },
-
             ),
           ),
         ],
         ),
     );
   }
-
 }
