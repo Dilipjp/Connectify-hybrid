@@ -5,8 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
-
-import '../Login/login.dart';
 import '../components/password_text_field.dart';
 import '../components/text_form_builder.dart';
 import '../utils/validation.dart';
@@ -201,7 +199,7 @@ class _RegisterState extends State<Register> {
               onPressed: () async {
                 if (viewModel.formKey.currentState?.validate() ?? false) {
                   viewModel.formKey.currentState?.save();
-                  await viewModel.register(context); // Call register without expecting a return value
+                  await viewModel.register(context);
                 }
               },
             ),

@@ -54,7 +54,7 @@ class AuthService {
       'time': Timestamp.now(),
       'id': user.uid,
       'country': country,
-      'photoUrl': user.photoURL ?? '',
+      // 'photoUrl': user.photoURL ?? '',
     });
   }
 
