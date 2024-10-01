@@ -1,11 +1,10 @@
-import 'package:connectify/services/user_service.dart';
+import 'package:connectify/screens/Fogotpassword_screen.dart';
+import 'package:connectify/screens/mainscreen.dart';
+import 'package:connectify/splashscreen/splashscreen.dart';
 import 'package:connectify/utils/config.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'firebase_options.dart';
-
+import 'Login/login.dart';
+import 'Register/register.dart';
 import 'firebase_options.dart';
 
 
