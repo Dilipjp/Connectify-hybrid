@@ -1,210 +1,241 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:connectify/view_models/auth/register_view_model.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:loading_overlay/loading_overlay.dart';
-import 'package:provider/provider.dart';
-import '../components/password_text_field.dart';
-import '../components/text_form_builder.dart';
-import '../utils/validation.dart';
-import '../widgets/indicators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
-
+class SignUpScreen extends StatefulWidget {
   @override
-  State<Register> createState() => _RegisterState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _RegisterState extends State<Register> {
-  @override
-  Widget build(BuildContext context) {
-    RegisterViewModel viewModel = Provider.of<RegisterViewModel>(context);
-    return LoadingOverlay(
-      progressIndicator: circularProgress(context),
-      isLoading: viewModel.loading,
-      child: Scaffold(
-        key: viewModel.scaffoldKey,
-        body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height / 10),
-            Text(
-              'Welcome to Connectify\nCreate a new account ',
-              style: GoogleFonts.nunitoSans(
-                fontWeight: FontWeight.bold,
-                fontSize: 25.0,
-              ),
-            ),
-            SizedBox(height: 30.0),
-            buildForm(viewModel, context),
-            SizedBox(height: 30.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Already have an account  ',
-                ),
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+class _SignUpScreenState extends State<SignUpScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseReference _usersDatabase = FirebaseDatabase.instance.reference().child('users');
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _userBioController = TextEditingController();
+
+  String _selectedRole = '';
+  String _errorMessage = '';
+  String _successMessage = '';
+
+  void _createNewAccount() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
+    String userName = _userNameController.text.trim();
+    String userBio = _userBioController.text.trim();
+
+    if (userName.isEmpty) {
+      _showError("Username is required");
+      return;
+    }
+    if (email.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      _showError("Please enter a valid email");
+      return;
+    }
+    if (password.length < 6) {
+      _showError("Password should be at least 6 characters");
+      return;
+    }
+    if (password != confirmPassword) {
+      _showError("Passwords do not match");
+      return;
+    }
+    if (_selectedRole.isEmpty) {
+      _showError("User role is required");
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        String userId = userCredential.user!.uid;
+        await _saveUserDetails(userId, userName, email, userBio, _selectedRole);
+
+        // Clear all input fields
+        _clearFields();
+
+        // Navigate to the Sign In page
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    } catch (e) {
+      _showError(e.toString());
+    }
   }
 
-  buildForm(RegisterViewModel viewModel, BuildContext context) {
-    return Form(
-      key: viewModel.formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: Column(
-        children: [
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.person_outline,
-            hintText: "Firstname",
-            validateFunction: Validations.validateName,
-            onSaved: (String val) {
-              viewModel.setFname(val);
-            },
-            focusNode: viewModel.firstnameFN,
-            nextFocusNode: viewModel.lastnameFN,
-            obscureText: false,
-          ),
-          SizedBox(height: 20.0),
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.person_outline,
-            hintText: "Lastname",
-            validateFunction: Validations.validateName,
-            onSaved: (String val) {
-              viewModel.setLname(val);
-            },
-            focusNode: viewModel.lastnameFN,
-            nextFocusNode: viewModel.emailFN,
-            obscureText: false,
-          ),
-          SizedBox(height: 20.0),
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.mail_outline,
-            hintText: "Email",
-            validateFunction: Validations.validateEmail,
-            onSaved: (String val) {
-              viewModel.setEmail(val);
-            },
-            focusNode: viewModel.emailFN,
-            nextFocusNode: viewModel.countryFN,
-            obscureText: false,
-          ),
-          SizedBox(height: 20.0),
-          PasswordFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.lock_closed_outline,
-            suffix: Ionicons.eye_outline,
-            hintText: "Password",
-            validateFunction: Validations.validatePassword,
-            obscureText: true,
-            onSaved: (String val) {
-              viewModel.setPassword(val);
-            },
-            focusNode: viewModel.passwordFN,
-            nextFocusNode: viewModel.confirmPasswordFN,
-          ),
-          SizedBox(height: 20.0),
-          PasswordFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.lock_open_outline,
-            hintText: "Confirm Password",
-            textInputAction: TextInputAction.done,
-            validateFunction: Validations.validatePassword,
-            submitAction: () => viewModel.register(context),
-            obscureText: true,
-            onSaved: (String val) {
-              viewModel.setConfirmPass(val);
-            },
-            focusNode: viewModel.confirmPasswordFN,
-          ),
-          SizedBox(height: 25.0),
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.person_outline,
-            hintText: "Country",
-            validateFunction: Validations.validateName,
-            onSaved: (String val) {
-              viewModel.setCountry(val);
-            },
-            focusNode: viewModel.countryFN,
-            nextFocusNode: viewModel.genderFN,
-            obscureText: false,
-          ),
-          SizedBox(height: 20.0),
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.person_outline,
-            hintText: "Gender",
-            validateFunction: Validations.validateName,
-            onSaved: (String val) {
-              viewModel.setGender(val);
-            },
-            focusNode: viewModel.genderFN,
-            nextFocusNode: viewModel.phoneNumFN,
-            obscureText: false,
-          ),
-          SizedBox(height: 20.0),
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.person_outline,
-            hintText: "Your phone number",
-            validateFunction: Validations.validateName,
-            onSaved: (String val) {
-              viewModel.setPhoneNum(val);
-            },
-            focusNode: viewModel.phoneNumFN,
-            obscureText: false,
-          ),
-          SizedBox(height: 20.0),
-          Container(
-            height: 45.0,
-            width: 180.0,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0),
+  _saveUserDetails(String userId, String userName, String email, String userBio, String userRole) async {
+    Map<String, dynamic> userDetails = {
+      'userName': userName,
+      'userEmail': email,
+      //'userProfileImage': 'https://via.placeholder.com/150',
+      'userBio': userBio,
+      'userRole': userRole,
+      'userStatus': 'active',
+      'userCreatedAt': DateTime.now().millisecondsSinceEpoch,
+    };
+
+    try {
+      await _usersDatabase.child(userId).set(userDetails);
+      setState(() {
+        _successMessage = "Account created successfully.";
+        _errorMessage = "";
+      });
+
+      // Show Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_successMessage),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+    } catch (e) {
+      _showError("Failed to save user details.");
+    }
+  }
+
+  void _showError(String message) {
+    // Show Snackbar for error messages
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+  }
+
+  void _clearFields() {
+    _userNameController.clear();
+    _emailController.clear();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
+    _userBioController.clear();
+    setState(() {
+      _selectedRole = '';
+      _errorMessage = '';
+      _successMessage = '';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Sign Up")),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Container(
+                height: 170.0,
+                width: MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  'assets/login.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+
+              SizedBox(height: 20),
+              TextField(
+                controller: _userNameController,
+                decoration: InputDecoration(
+                  labelText: "Username",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _confirmPasswordController,
+                decoration: InputDecoration(
+                  labelText: "Confirm Password",
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _userBioController,
+                decoration: InputDecoration(
+                  labelText: "Bio",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: _selectedRole.isEmpty ? null : _selectedRole,
+                hint: Text("Select Role"),
+                items: ['Admin', 'User'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedRole = newValue!;
+                  });
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _createNewAccount,
+                child: Text("Sign Up"),
+              ),
+              if (_errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    _errorMessage,
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Theme.of(context).colorScheme.secondary),
-              ),
-              child: Text(
-                'Sign Up'.toUpperCase(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w600,
+              if (_successMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    _successMessage,
+                    style: TextStyle(color: Colors.green),
+                  ),
                 ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: Text("Already have an account? Sign In"),
               ),
-              onPressed: () async {
-                if (viewModel.formKey.currentState?.validate() ?? false) {
-                  viewModel.formKey.currentState?.save();
-                  await viewModel.register(context);
-                }
-              },
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

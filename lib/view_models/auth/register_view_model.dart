@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../Login/login.dart';
 import '../../services/auth_service.dart';
 
@@ -76,7 +75,7 @@ class RegisterViewModel extends ChangeNotifier {
     phoneNum = null;
     gender = null;
     formKey.currentState?.reset();
-    notifyListeners(); // Notify listeners to update the UI
+    notifyListeners();
   }
 
   void setFname(String val) {

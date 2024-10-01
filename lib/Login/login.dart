@@ -1,193 +1,172 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:loading_overlay/loading_overlay.dart';
-import 'package:provider/provider.dart';
-import 'package:connectify/Register/register.dart';
-import 'package:connectify/components/password_text_field.dart';
-import 'package:connectify/components/text_form_builder.dart';
-import 'package:connectify/utils/validation.dart';
-import 'package:connectify/view_models/auth/login_view_model.dart';
-import 'package:connectify/widgets/indicators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-
-class Login extends StatefulWidget {
+class SignInScreen extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _SignInScreenState createState() => _SignInScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? errorMessage;
+
+  void signInUser() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (email.isEmpty) {
+      setState(() {
+        errorMessage = 'Email is required';
+      });
+      return;
+    }
+
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      setState(() {
+        errorMessage = 'Please enter a valid email address';
+      });
+      return;
+    }
+
+    if (password.isEmpty) {
+      setState(() {
+        errorMessage = 'Password is required';
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      setState(() {
+        errorMessage = 'Password must be at least 6 characters long';
+      });
+      return;
+    }
+
+    setState(() {
+      errorMessage = null;
+    });
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        errorMessage = 'Authentication failed: ${e.message}';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    LoginViewModel viewModel = Provider.of<LoginViewModel>(context);
-    return LoadingOverlay(
-      progressIndicator: circularProgress(context),
-      isLoading: viewModel.loading,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        key: viewModel.scaffoldKey,
-        body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            SizedBox(height: MediaQuery
-                .of(context)
-                .size
-                .height / 5),
+
             Container(
               height: 170.0,
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              child: Image.asset('assets/images/login.png'
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                'assets/login.png',
+                fit: BoxFit.contain,
               ),
             ),
+
             SizedBox(height: 10.0),
-            Center(
-              child: Text(
-                'Welcome back!',
-                style: TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                'Log into your account!',
-                style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w300,
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .secondary,
-                ),
-              ),
-            ),
-            SizedBox(height: 25.0),
-            buildForm(context, viewModel),
-            SizedBox(height: 10.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Don\'t have an account?'),
-                SizedBox(width: 5.0),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => Register(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Sign Up',
+
+            // Sign In Form
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Welcome Back',
                     style: TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .secondary,
                     ),
                   ),
-                ),
+                  SizedBox(height: 20),
 
-              ],
+
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      errorText: errorMessage?.contains('Email') ?? false ? errorMessage : null,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+
+                  TextField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                      errorText: errorMessage?.contains('Password') ?? false ? errorMessage : null,
+                    ),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 20),
+
+                  Center(
+                    child: SizedBox(
+                      width: 100,
+                      height: 40,
+                      child:ElevatedButton(
+                        onPressed: signInUser,
+                        child: Text('Sign In', style: TextStyle(fontSize: 14),),
+
+                      ),
+                    ),),
+
+
+                  SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/signup');
+                        },
+                        child: Text('Dont have an account? SignUp'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/forget-password');
+                        },
+                        child: Text('Forgot Password?'),
+                      ),
+                    ],
+                  ),
+                  // Error Message
+                  if (errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        errorMessage!,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-  buildForm(BuildContext context, LoginViewModel viewModel) {
-    return Form(
-      key: viewModel.formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: Column(
-        children: [
-          TextFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.mail_outline,
-            hintText: "Email",
-            textInputAction: TextInputAction.next,
-            validateFunction: Validations.validateEmail,
-            onSaved: (String val) {
-              viewModel.setEmail(val);
-            },
-            focusNode: viewModel.emailFN,
-            nextFocusNode: viewModel.passFN, obscureText: false,
-          ),
-          SizedBox(height: 15.0),
-          PasswordFormBuilder(
-            enabled: !viewModel.loading,
-            prefix: Ionicons.lock_closed_outline,
-            suffix: Ionicons.eye_outline,
-            hintText: "Password",
-            textInputAction: TextInputAction.done,
-            validateFunction: Validations.validatePassword,
-            submitAction: () => viewModel.login(context),
-            obscureText: true,
-            onSaved: (String val) {
-              viewModel.setPassword(val);
-            },
-            focusNode: viewModel.passFN,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: InkWell(
-                onTap: () => viewModel.forgotPassword(context),
-                child: Container(
-                  width: 130,
-                  height: 40,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 10.0),
-          Container(
-            height: 45.0,
-            width: 180.0,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0),
-                  ),
-                ),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  Theme
-                      .of(context)
-                      .colorScheme
-                      .secondary,
-                ),
-              ),
-              // highlightElevation: 4.0,
-              child: Text(
-                'Log in'.toUpperCase(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              onPressed: () => viewModel.login(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  }
+}

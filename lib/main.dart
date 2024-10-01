@@ -1,15 +1,9 @@
 import 'package:connectify/services/user_service.dart';
 import 'package:connectify/utils/config.dart';
-import 'package:connectify/utils/constants.dart';
-import 'package:connectify/utils/providers.dart';
-import 'package:connectify/view_models/theme/theme_view_model.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:connectify/components/life_cycle_event_handler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:connectify/splashscreen/splashscreen.dart';
-import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
 
 import 'firebase_options.dart';
@@ -20,51 +14,28 @@ void main() async {
   await Config.initFirebase(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(
-      LifecycleEventHandler(
-        detachedCallBack: () => UserService().setUserStatus(false),
-        resumeCallBack: () => UserService().setUserStatus(true),
-      ),
-    );
-  }
-  @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: providers,
-      child: Consumer<ThemeProvider>(
-        builder: (context, ThemeProvider notifier, Widget? child) {
-          return MaterialApp(
-            title: "Connectify App",
-            debugShowCheckedModeBanner: false,
-            theme: themeData(
-              notifier.dark ? Constants.darkTheme : Constants.lightTheme,
-            ),
-            home: Splashscreen(),
-          );
-        },
+    return MaterialApp(
+      title: 'Connectify App',
+
+
+      initialRoute: '/splash',
+      routes: {
+        '/splash': (context) => SplashScreen(),
+        '/login': (context) => SignInScreen(),
+        '/signup': (context) => SignUpScreen(),
+        '/home': (context) => HomeScreen(),
+        '/forget-password': (context) => ForgetPasswordScreen(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
     );
   }
-
-    ThemeData themeData(ThemeData theme) {
-      return theme.copyWith(
-        textTheme: GoogleFonts.nunitoTextTheme(
-          theme.textTheme,
-        ),
-      );
-    }
-
 }
