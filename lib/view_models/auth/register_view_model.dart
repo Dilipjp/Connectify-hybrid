@@ -43,7 +43,7 @@ class RegisterViewModel extends ChangeNotifier {
             Navigator.pushReplacement(
               context,
               CupertinoPageRoute(
-                builder: (_) => Login(), // Navigate to Login page
+                builder: (_) => Login(),
               ),
             );
           } else {

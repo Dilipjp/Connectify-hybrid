@@ -6,7 +6,7 @@ import '../utils/firebase.dart';
 
 class AuthService {
 
-  final DatabaseReference usersRef = FirebaseDatabase.instance.ref('users');
+  final DatabaseReference usersRef = FirebaseDatabase.instance.reference().child('users');
 
   User? getCurrentUser() {
     return firebaseAuth.currentUser;
@@ -28,7 +28,7 @@ class AuthService {
       );
 
       if (res.user != null) {
-        await saveUserToFirestore(firstname, lastname, gender, phoneNum, res.user!, email, country);
+        await saveUserToRealtimeDatabase(firstname, lastname, gender, phoneNum, res.user!, email, country);
         return true;
       } else {
         return false;
@@ -39,7 +39,7 @@ class AuthService {
     }
   }
 
-  Future<void> saveUserToFirestore(
+  Future<void> saveUserToRealtimeDatabase(
       String firstname,
       String lastname,
       String gender,
@@ -47,17 +47,21 @@ class AuthService {
       User user,
       String email,
       String country) async {
-    await usersRef.child(user.uid).set({
+
+    // Create a map for user data
+    Map<String, dynamic> userData = {
       'firstname': firstname,
       'lastname': lastname,
       'gender': gender,
       'phonenum': phoneNum,
       'email': email,
-      'time': Timestamp.now(),
+      'time': ServerValue.timestamp,
       'id': user.uid,
       'country': country,
       // 'photoUrl': user.photoURL ?? '',
-    });
+    };
+
+    await usersRef.child(user.uid).set(userData);
   }
 
   Future<bool> loginUser({required String email, required String password}) async {
