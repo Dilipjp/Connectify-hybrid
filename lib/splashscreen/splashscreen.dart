@@ -1,51 +1,60 @@
-import 'dart:async';
+import 'package:connectify/Login/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:connectify/Login/login.dart';
+import 'dart:async';
+
 import '../screens/mainscreen.dart';
 
-class SplashScreen extends StatefulWidget {
+class Splashscreen extends StatefulWidget {
+  const Splashscreen({super.key});
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<Splashscreen> createState() => _SplashscreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
+class _SplashscreenState extends State<Splashscreen> {
+
   void initState() {
     super.initState();
-
-
-    Timer(Duration(seconds: 5), () async {
-
-      FirebaseAuth auth = FirebaseAuth.instance;
-      User? user = auth.currentUser;
-
-      if (user != null) {
-
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
-      } else {
-
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => SignInScreen()),
-        );
-      }
+    Timer(Duration(seconds: 5), () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AuthWrapper()));
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset(
-          'assets/images/Splash_connectify.jpeg',
-          fit: BoxFit.cover,
-          height: double.infinity,
-          width: double.infinity,
-          alignment: Alignment.center,
-        ),
-      ),
+body: Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Image.asset('assets/images/Splash_connectify.jpeg',height: 100,),
+      SizedBox(height: 20),
+
+    ],
+  ),
+),
     );
   }
 }
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            return TabScreen();
+          } else {
+            return Login();
+          }
+        }
+        return Scaffold(
+
+        );
+      },
+    );
+  }
+}
+
