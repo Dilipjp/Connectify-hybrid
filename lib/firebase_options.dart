@@ -42,11 +42,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAUzOtd1N4PrpqQbRY9r8D508H3okdgHkc',
-    appId: '1:914924731234:web:7df9ae44dfea398e764a3b',
+    //appId: '1:914924731234:web:7df9ae44dfea398e764a3b',
     messagingSenderId: '914924731234',
     projectId: 'connectify-d3ce8',
     authDomain: 'connectify-d3ce8.firebaseapp.com',
     storageBucket: 'connectify-d3ce8.appspot.com',
+      databaseURL: "https://connectify-d3ce8-default-rtdb.firebaseio.com",
+      appId: "1:914924731234:web:b7aa3939c548d398764a3b"
   );
 
   static const FirebaseOptions android = FirebaseOptions(

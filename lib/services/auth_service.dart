@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import '../utils/firebase.dart';
 
 class AuthService {
-  final CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
+
+  final DatabaseReference usersRef = FirebaseDatabase.instance.ref('users');
 
   User? getCurrentUser() {
     return firebaseAuth.currentUser;
@@ -45,7 +47,7 @@ class AuthService {
       User user,
       String email,
       String country) async {
-    await usersRef.doc(user.uid).set({
+    await usersRef.child(user.uid).set({
       'firstname': firstname,
       'lastname': lastname,
       'gender': gender,

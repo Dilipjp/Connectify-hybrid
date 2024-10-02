@@ -2,7 +2,6 @@ import 'package:connectify/Login/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import '../screens/mainscreen.dart';
 
 class Splashscreen extends StatefulWidget {
