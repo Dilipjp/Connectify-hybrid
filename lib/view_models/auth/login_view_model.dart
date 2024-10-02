@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:connectify/screens/mainscreen.dart';
 import 'package:connectify/services/auth_service.dart';
-import 'package:connectify/utils/validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -59,26 +58,6 @@ FocusNode passFN = FocusNode();
     notifyListeners();
   }
 
-  forgotPassword(BuildContext context) async {
-    loading = true;
-    notifyListeners();
-    FormState form = formKey.currentState!;
-    form.save();
-
-    if (Validations.validateEmail(email as String?) != null) {
-      showInSnackBar('Please enter valid email to reset your password.',context);
-    }
-    else {
-      try {
-        await auth.forgotPassword(email! as String);
-        showInSnackBar('Please check your email  ''to reset your password', context);
-      } catch (e) {
-        showInSnackBar('${e.toString()}', context);
-      }
-    }
-    loading = false;
-    notifyListeners();
-  }
   setEmail(val) {
     email = val;
     notifyListeners();

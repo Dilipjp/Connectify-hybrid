@@ -1,3 +1,6 @@
+import 'package:connectify/Register/register.dart';
+import 'package:connectify/screens/FogotPassword.dart';
+import 'package:connectify/screens/mainscreen.dart';
 import 'package:connectify/services/user_service.dart';
 import 'package:connectify/utils/config.dart';
 import 'package:connectify/utils/constants.dart';
@@ -10,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:connectify/splashscreen/splashscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'Login/login.dart';
 import 'firebase_options.dart';
 
 import 'firebase_options.dart';
@@ -48,12 +52,16 @@ class _MyAppState extends State<MyApp> {
         builder: (context, ThemeProvider notifier, Widget? child) {
           return MaterialApp(
             title: "Connectify App",
-            debugShowCheckedModeBanner: false,
-            theme: themeData(
-              notifier.dark ? Constants.darkTheme : Constants.lightTheme,
-            ),
-            home: Splashscreen(),
-          );
+
+            initialRoute: '/splash',
+            routes: {
+              '/splash': (context) => Splashscreen(),
+              '/login': (context) => Login(),
+              '/signup': (context) => Register(),
+              '/home': (context) => TabScreen(),
+              '/forget-password': (context) => ForgetPasswordScreen(),
+
+            });
         },
       ),
     );

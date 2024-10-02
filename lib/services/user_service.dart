@@ -56,7 +56,7 @@ class UserService extends Service {
       return true;
     }
 
-    return false;  // Handle case when snapshot doesn't exist
+    return false;
   }
 
 }

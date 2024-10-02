@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
-import 'package:connectify/Register/register.dart';
 import 'package:connectify/components/password_text_field.dart';
 import 'package:connectify/components/text_form_builder.dart';
 import 'package:connectify/utils/validation.dart';
@@ -69,30 +68,20 @@ class _LoginState extends State<Login> {
             buildForm(context, viewModel),
             SizedBox(height: 10.0),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Don\'t have an account?'),
-                SizedBox(width: 5.0),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => Register(),
-                      ),
-                    );
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/signup');
                   },
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .secondary,
-                    ),
-                  ),
+                  child: Text('Dont have an account? SignUp'),
                 ),
-
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/forget-password');
+                  },
+                  child: Text('Forgot Password?'),
+                ),
               ],
             ),
           ],
@@ -134,28 +123,7 @@ class _LoginState extends State<Login> {
             },
             focusNode: viewModel.passFN,
           ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: InkWell(
-                onTap: () => viewModel.forgotPassword(context),
-                child: Container(
-                  width: 130,
-                  height: 40,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+
           SizedBox(height: 10.0),
           Container(
             height: 45.0,
