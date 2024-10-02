@@ -61,7 +61,35 @@ class _TabScreenState extends State<TabScreen> {
           );
         },
           child: pages[_page]['page'],
-        ),
+        ),  bottomNavigationBar: BottomAppBar(
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(width: 5),
+          for (Map item in pages)
+            item['index'] == 2
+                ? buildFab()
+                : Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: IconButton(
+                icon: Icon(
+                  item['icon'],
+                  color: item['index'] != _page
+                      ? Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black
+                      : Theme.of(context).colorScheme.secondary,
+                  size: 25.0,
+                ),
+                onPressed: () => navigationTapped(item['index']),
+              ),
+            ),
+          SizedBox(width: 5),
+        ],
+      ),
+    ),
     );
   }
 }
