@@ -56,6 +56,7 @@ class DefaultFirebaseOptions {
     appId: '1:914924731234:android:fd940de5e75b02b5764a3b',
     messagingSenderId: '914924731234',
     projectId: 'connectify-d3ce8',
+    databaseURL: "https://connectify-d3ce8-default-rtdb.firebaseio.com",
     storageBucket: 'connectify-d3ce8.appspot.com',
   );
 
@@ -82,6 +83,7 @@ class DefaultFirebaseOptions {
     appId: '1:914924731234:web:b7aa3939c548d398764a3b',
     messagingSenderId: '914924731234',
     projectId: 'connectify-d3ce8',
+    databaseURL: "https://connectify-d3ce8-default-rtdb.firebaseio.com",
     authDomain: 'connectify-d3ce8.firebaseapp.com',
     storageBucket: 'connectify-d3ce8.appspot.com',
   );
