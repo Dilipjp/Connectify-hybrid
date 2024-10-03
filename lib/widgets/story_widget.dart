@@ -130,8 +130,7 @@ class StoryWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  user.username!,
+                Text(                  user.username!,
                   style: TextStyle(
                     fontSize: 10.0,
                     fontWeight: FontWeight.bold,
