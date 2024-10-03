@@ -71,7 +71,7 @@ class _FeedsState extends State<Feeds> with AutomaticKeepAliveClientMixin{
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.secondary,
         onRefresh: () =>
-            postRef.orderBy('timestamp', descending: true).limit(page).get(),
+        postRef.orderByChild('timestamp').limitToFirst(page).get(),
         child: SingleChildScrollView(
           // controller: scrollController,
           physics: NeverScrollableScrollPhysics(),
@@ -83,10 +83,10 @@ class _FeedsState extends State<Feeds> with AutomaticKeepAliveClientMixin{
               Container(
                 height: MediaQuery.of(context).size.height,
                 child: FutureBuilder(
-                  future: postRef
-                      .orderBy('timestamp', descending: true)
-                      .limit(page)
-                      .get(),
+                  // future: postRef
+                  //     .orderBy('timestamp', descending: true)
+                  //     .limit(page)
+                  //     .get(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
                       var snap = snapshot.data;

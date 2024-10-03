@@ -1,6 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
+
+import '../pages/feeds.dart';
+import '../pages/notification.dart';
+import '../pages/profile.dart';
+import '../pages/search.dart';
+import '../utils/firebase.dart';
 
 class TabScreen extends StatefulWidget {
   @override
@@ -99,10 +106,10 @@ class _TabScreenState extends State<TabScreen> {
       height: 45.0,
       width: 45.0,
       // ignore: missing_required_param
-      child: FabContainer(
-        icon: Ionicons.add_outline,
-        mini: true,
-      ),
+      // child: FabContainer(
+      //   icon: Ionicons.add_outline,
+      //   mini: true,
+      // ),
     );
   }
 
