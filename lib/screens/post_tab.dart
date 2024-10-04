@@ -29,6 +29,53 @@ class _PostTabState extends State<PostTab> {
       });
     }
   }
+
+  Future<void> uploadPost() async {
+    if (_image == null) {
+      _showMessageDialog("Please select an image");
+      return;
+    }
+    if (captionController.text.isEmpty) {
+      _showMessageDialog("Caption is required");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    String userId = _auth.currentUser?.uid ?? '';
+    String fileName = userId + "_" + DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageRef = FirebaseStorage.instance.ref().child('PostImages/$fileName.jpg');
+
+    try {
+      UploadTask uploadTask = storageRef.putFile(_image!);
+      await uploadTask;
+      String downloadUrl = await storageRef.getDownloadURL();
+
+      DatabaseReference postsRef = FirebaseDatabase.instance.reference().child('posts');
+      String postId = postsRef.push().key!;
+      await postsRef.child(postId).set({
+        'postId': postId,
+        'postImageUrl': downloadUrl,
+        'caption': captionController.text,
+        'userId': userId,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      });
+
+      setState(() {
+        _image = null;
+        captionController.clear();
+        _isLoading = false;
+      });
+      _showMessageDialog("Post uploaded successfully!");
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showMessageDialog("Failed to upload post: $e");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
