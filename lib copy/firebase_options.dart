@@ -42,20 +42,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAUzOtd1N4PrpqQbRY9r8D508H3okdgHkc',
-<<<<<<< HEAD
-    //appId: '1:914924731234:web:7df9ae44dfea398e764a3b',
-=======
     appId: '1:914924731234:web:7df9ae44dfea398e764a3b',
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
     messagingSenderId: '914924731234',
     projectId: 'connectify-d3ce8',
     authDomain: 'connectify-d3ce8.firebaseapp.com',
     storageBucket: 'connectify-d3ce8.appspot.com',
-<<<<<<< HEAD
-      databaseURL: "https://connectify-d3ce8-default-rtdb.firebaseio.com",
-      appId: "1:914924731234:web:b7aa3939c548d398764a3b"
-=======
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -63,10 +54,6 @@ class DefaultFirebaseOptions {
     appId: '1:914924731234:android:fd940de5e75b02b5764a3b',
     messagingSenderId: '914924731234',
     projectId: 'connectify-d3ce8',
-<<<<<<< HEAD
-    databaseURL: "https://connectify-d3ce8-default-rtdb.firebaseio.com",
-=======
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
     storageBucket: 'connectify-d3ce8.appspot.com',
   );
 
@@ -93,10 +80,6 @@ class DefaultFirebaseOptions {
     appId: '1:914924731234:web:b7aa3939c548d398764a3b',
     messagingSenderId: '914924731234',
     projectId: 'connectify-d3ce8',
-<<<<<<< HEAD
-    databaseURL: "https://connectify-d3ce8-default-rtdb.firebaseio.com",
-=======
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
     authDomain: 'connectify-d3ce8.firebaseapp.com',
     storageBucket: 'connectify-d3ce8.appspot.com',
   );

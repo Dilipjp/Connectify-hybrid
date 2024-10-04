@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
-<<<<<<< HEAD
-=======
 import 'package:connectify/Register/register.dart';
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
 import 'package:connectify/components/password_text_field.dart';
 import 'package:connectify/components/text_form_builder.dart';
 import 'package:connectify/utils/validation.dart';
@@ -72,22 +69,6 @@ class _LoginState extends State<Login> {
             buildForm(context, viewModel),
             SizedBox(height: 10.0),
             Row(
-<<<<<<< HEAD
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/signup');
-                  },
-                  child: Text('Dont have an account? SignUp'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/forget-password');
-                  },
-                  child: Text('Forgot Password?'),
-                ),
-=======
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Don\'t have an account?'),
@@ -112,7 +93,6 @@ class _LoginState extends State<Login> {
                   ),
                 ),
 
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
               ],
             ),
           ],
@@ -137,11 +117,7 @@ class _LoginState extends State<Login> {
               viewModel.setEmail(val);
             },
             focusNode: viewModel.emailFN,
-<<<<<<< HEAD
-            nextFocusNode: viewModel.passFN, obscureText: false,
-=======
             nextFocusNode: viewModel.passFN, obscureText: true,
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
           ),
           SizedBox(height: 15.0),
           PasswordFormBuilder(
@@ -158,9 +134,6 @@ class _LoginState extends State<Login> {
             },
             focusNode: viewModel.passFN,
           ),
-<<<<<<< HEAD
-
-=======
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
@@ -183,7 +156,6 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
           SizedBox(height: 10.0),
           Container(
             height: 45.0,

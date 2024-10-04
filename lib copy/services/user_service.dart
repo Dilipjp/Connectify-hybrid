@@ -4,10 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectify/models/user.dart';
 import 'package:connectify/services/services.dart';
 import 'package:connectify/utils/firebase.dart';
-<<<<<<< HEAD
-import 'package:firebase_database/firebase_database.dart';
-=======
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
 
 class UserService extends Service {
   //get the authenticated uis
@@ -20,55 +16,11 @@ class UserService extends Service {
     var user = firebaseAuth.currentUser;
     if (user != null) {
       usersRef
-<<<<<<< HEAD
-          .child(user.uid)
-=======
           .doc(user.uid)
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
           .update({'isOnline': isOnline, 'lastSeen': Timestamp.now()});
     }
   }
 
-<<<<<<< HEAD
-  updateProfile({
-    File? image,
-    String? username,
-    String? bio,
-    String? country
-  }) async {
-
-    DatabaseReference userRef = usersRef.child(currentUid());
-    DatabaseEvent event = await userRef.once();
-    DataSnapshot snapshot = event.snapshot;
-
-    if (snapshot.exists) {
-      // Deserialize the user data into UserModel
-      Map<String, dynamic> userData = Map<String, dynamic>.from(snapshot.value as Map);
-      var users = UserModel.fromJson(userData);
-
-      users.bio = bio;
-      users.country = country;
-
-
-      if (image != null) {
-        users.photoUrl = await uploadImage(profilePic, image);
-      }
-
-      // Update user profile in Realtime Database
-      await userRef.update({
-        'bio': bio,
-        'country': country,
-        'photoUrl': users.photoUrl ?? '',
-      });
-
-      return true;
-    }
-
-    return false;
-  }
-
-}
-=======
 //updates user profile in the Edit Profile Screen
   updateProfile(
       {File? image, String? username, String? bio, String? country}) async {
@@ -89,4 +41,3 @@ class UserService extends Service {
     return true;
   }
 }
->>>>>>> f777a7b046bdee987911d81dcfc7ca05fbbb8eaa
