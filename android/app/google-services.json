@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "37640173155",
+    "firebase_url": "https://conectivity-app-default-rtdb.firebaseio.com",
+    "project_id": "conectivity-app",
+    "storage_bucket": "conectivity-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37640173155:android:8b49dcba0b8111073b6a56",
+        "android_client_info": {
+          "package_name": "com.dilip.conectivity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABAqEugg2kfVOMILN0j4SPq3xIYISlvAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37640173155:android:aaab95b3fa3cef033b6a56",
+        "android_client_info": {
+          "package_name": "com.example.connectify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABAqEugg2kfVOMILN0j4SPq3xIYISlvAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
