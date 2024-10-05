@@ -55,21 +55,24 @@ class _ProfileTabState extends State<ProfileTab> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: Colors.purple,
+        title: Text('Profile',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        backgroundColor: Colors.black,
         elevation: 0,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                color: Colors.purple,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(30),
-                ),
-              ),
+              // decoration: BoxDecoration(
+              //   color: Colors.purple,
+              //   borderRadius: BorderRadius.vertical(
+              //     bottom: Radius.circular(30),
+              //   ),
+              // ),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -83,7 +86,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   Text(
                     userName ?? 'Loading...',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -92,7 +95,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   Text(
                     userBio ?? '@loading_bio',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: Colors.black,
                       fontSize: 16,
                     ),
                   ),
@@ -116,7 +119,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   // Edit profile action
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
+                  backgroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -149,7 +152,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -168,12 +171,12 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             SizedBox(height: 30),
-            Center(
-              child: Text(
-                'No posts yet',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     'No posts yet',
+            //     style: TextStyle(color: Colors.grey, fontSize: 16),
+            //   ),
+            // ),
           ],
         ),
       ),
