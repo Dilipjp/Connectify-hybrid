@@ -135,11 +135,12 @@ class _HomeTabState extends State<HomeTab> {
                                       },
                                     ),
                                     Text(
-                                      post['commentCount']?.toString() ?? '0', // Comment count
+                                      post['commentCount'] != null ? post['commentCount'].toString() : '0', // Fallback to '0' if null
                                       style: TextStyle(fontSize: 16),
                                     ),
                                   ],
                                 ),
+
                                 IconButton(
                                   icon: Icon(Icons.share_outlined),
                                   onPressed: () {
@@ -242,16 +243,29 @@ class _CommentsScreenState extends State<CommentsScreen> {
         'timestamp': DateTime.now().millisecondsSinceEpoch,
       };
 
-      _commentsRef
-          .child(widget.postId)
+      DatabaseReference postRef = _commentsRef.child(widget.postId);
+
+      // Add comment to the database
+      postRef
           .child('comments')
           .push()
           .set(comment)
           .then((_) {
         _commentController.clear();
+
+        // Increment comment count
+        postRef.child('commentCount').runTransaction((mutableData) {
+          int currentCount = (mutableData as int? ?? 0); // Cast mutableData to int or default to 0
+          mutableData = currentCount + 1; // Increment the count
+          return Transaction.success(mutableData); // Return the updated data
+        });
+
+
+
       });
     }
   }
+
 
   // Function to fetch comments
   Stream<List<Map<String, dynamic>>> _fetchComments() {
