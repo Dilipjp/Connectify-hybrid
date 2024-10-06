@@ -268,18 +268,39 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
 
   // Function to fetch comments
-  Stream<List<Map<String, dynamic>>> _fetchComments() {
-    return _commentsRef.child(widget.postId).child('comments').onValue.map(
-          (event) {
-        final commentsMap = Map<String, dynamic>.from(event.snapshot.value as Map);
-        final commentsList = commentsMap.entries.map((e) {
-          final commentData = Map<String, dynamic>.from(e.value);
-          return commentData;
-        }).toList();
-        return commentsList;
-      },
-    );
+  // Function to fetch comments
+  Stream<List<Map<String, dynamic>>> _fetchComments() async* {
+    final event = await _commentsRef.child(widget.postId).child('comments').once();
+
+    // If there are no comments, return an empty list
+    if (event.snapshot.value == null) {
+      yield [];
+      return;
+    }
+
+    final commentsMap = Map<String, dynamic>.from(event.snapshot.value as Map);
+
+    List<Map<String, dynamic>> commentsList = [];
+
+    // Iterate through each comment
+    for (var entry in commentsMap.entries) {
+      final commentData = Map<String, dynamic>.from(entry.value);
+      final userId = commentData['userId'];  // Get the userId for the comment
+
+      // Fetch user data based on userId
+      final userSnapshot = await FirebaseDatabase.instance.ref().child('users').child(userId).once();
+      final userData = userSnapshot.snapshot.value as Map;
+
+      // Add userName and userProfileImage to comment data
+      commentData['userName'] = userData['userName'];
+      commentData['userProfileImage'] = userData['userProfileImage'];
+
+      commentsList.add(commentData);
+    }
+
+    yield commentsList;  // Yield the comments list with user data
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -293,8 +314,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
             child: StreamBuilder<List<Map<String, dynamic>>>(
               stream: _fetchComments(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator()); // Show loading spinner while waiting
+                }
+
+                // Check if there are no comments
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No comments yet')); // Display message if no comments
                 }
 
                 final comments = snapshot.data!;
@@ -303,13 +329,18 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   itemBuilder: (context, index) {
                     final comment = comments[index];
                     final commentText = comment['commentText'];
-                    final userName = comment['userName'];
+                    final userName = comment['userName'] ?? 'Anonymous';  // Fallback if userName is missing
+                    final userProfileImage = comment['userProfileImage'] ?? '';  // Fallback if profileImage is missing
                     final timestamp = comment['timestamp'];
                     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
                     final timeFormatted = DateFormat('MMM d, hh:mm a').format(dateTime);
 
                     return ListTile(
-                      leading: CircleAvatar(child: Icon(Icons.person)), // Profile picture placeholder
+                      leading: CircleAvatar(
+                        backgroundImage: userProfileImage != null && userProfileImage.isNotEmpty
+                            ? NetworkImage(userProfileImage) as ImageProvider<Object>
+                            : AssetImage('assets/images/default_avatar.png'),  // Default avatar
+                      ),
                       title: Text(userName),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,4 +382,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
       ),
     );
   }
+
+
 }
