@@ -93,10 +93,14 @@ class _PostTabState extends State<PostTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Post'),
-        backgroundColor: Colors.purple,
+        title: Text(
+          'Create Post',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        backgroundColor: Colors.black,
         centerTitle: true,
       ),
+
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -129,10 +133,10 @@ class _PostTabState extends State<PostTab> {
                 : ElevatedButton(
               onPressed: _uploadPost,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
+                backgroundColor: Colors.black,
                 padding: EdgeInsets.symmetric(vertical: 15),
               ),
-              child: Text('Upload Post'),
+              child: Text('Upload Post', style: TextStyle(color: Colors.white),),
             ),
           ],
         ),
