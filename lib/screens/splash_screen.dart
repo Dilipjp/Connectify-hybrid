@@ -17,7 +17,36 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Splash Screen')),
+      backgroundColor: Colors.purple, // Background color
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Logo or image
+            Image.asset(
+              'assets/images/logo.png', // Replace with your logo asset path
+              height: 100, // Adjust the height to your preference
+            ),
+            SizedBox(height: 20),
+
+            // App name or welcome text
+            Text(
+              'Welcome to Connectify', // Replace with your app name
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 40),
+
+            // Loading indicator
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // Loading spinner color
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
