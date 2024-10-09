@@ -47,7 +47,7 @@ class AuthWrapper extends StatelessWidget {
         // Debugging statement
         print("Auth state changed: ${snapshot.connectionState}, user: ${snapshot.data}");
 
-        if (snapshot.connectionState == ConnectionState.active) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return SplashScreen(); // Show splash screen while loading
         } else if (snapshot.hasData) {
           return HomeScreen(); // User is signed in
@@ -58,21 +58,3 @@ class AuthWrapper extends StatelessWidget {
     );
   }
 }
-
-// class SplashScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             CircularProgressIndicator(), // Loading indicator
-//             SizedBox(height: 20),
-//             Text('Loading...'), // Splash screen text
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

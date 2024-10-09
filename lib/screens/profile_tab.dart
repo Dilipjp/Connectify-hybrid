@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'edit_profile_screen.dart';  // Import your EditProfileScreen
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -22,18 +23,16 @@ class _ProfileTabState extends State<ProfileTab> {
     _loadUserData();
   }
 
-  Future<void> _loadUserData() async {
-    // Get the current user
+  // Real-time listener for user data changes
+  void _loadUserData() async {
     User? currentUser = _auth.currentUser;
 
     if (currentUser != null) {
       String userId = currentUser.uid;
-
-      // Reference to the user's data in the database
       DatabaseReference userRef = _database.ref('users/$userId');
 
-      // Listen to the user's data and update the UI when data changes
-      userRef.once().then((DatabaseEvent event) {
+      // Set a real-time listener using onValue
+      userRef.onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> userData = event.snapshot.value as Map;
 
@@ -44,7 +43,7 @@ class _ProfileTabState extends State<ProfileTab> {
             userEmail = userData['userEmail'] ?? 'No email available';
           });
         }
-      }).catchError((error) {
+      }, onError: (error) {
         print('Error loading user data: $error');
       });
     }
@@ -55,8 +54,9 @@ class _ProfileTabState extends State<ProfileTab> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Profile',
-          style: TextStyle(color: Colors.white), // Set text color to white
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black,
         elevation: 0,
@@ -67,12 +67,6 @@ class _ProfileTabState extends State<ProfileTab> {
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 20),
-              // decoration: BoxDecoration(
-              //   color: Colors.purple,
-              //   borderRadius: BorderRadius.vertical(
-              //     bottom: Radius.circular(30),
-              //   ),
-              // ),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -116,7 +110,14 @@ class _ProfileTabState extends State<ProfileTab> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () {
-                  // Edit profile action
+                  // Navigate to EditProfileScreen
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfileScreen())).then((_) {
+                    // Trigger data reload after returning from EditProfileScreen
+                    _loadUserData();
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -143,7 +144,7 @@ class _ProfileTabState extends State<ProfileTab> {
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    await _auth.signOut(); // Sign out from Firebase
+                    await _auth.signOut();
                     Navigator.pushReplacementNamed(context, '/sign-in');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -171,12 +172,6 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             SizedBox(height: 30),
-            // Center(
-            //   child: Text(
-            //     'No posts yet',
-            //     style: TextStyle(color: Colors.grey, fontSize: 16),
-            //   ),
-            // ),
           ],
         ),
       ),
