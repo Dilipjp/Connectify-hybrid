@@ -17,14 +17,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple, // Background color
+      backgroundColor: Colors.white, // Background color
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo or image
             Image.asset(
-              'assets/images/logo.png', // Replace with your logo asset path
+              'assets/images/logo.jpeg', // Replace with your logo asset path
               height: 100, // Adjust the height to your preference
             ),
             SizedBox(height: 20),
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Welcome to Connectify', // Replace with your app name
               style: TextStyle(
                 fontSize: 24,
-                color: Colors.white,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
