@@ -44,6 +44,132 @@ class _HomeTabState extends State<HomeTab> {
           Map<dynamic, dynamic> posts = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
           List<dynamic> postList = posts.values.toList();
 
+          // return ListView.builder(
+          //   itemCount: postList.length,
+          //   itemBuilder: (context, index) {
+          //     Map<dynamic, dynamic> post = postList[index];
+          //     return FutureBuilder(
+          //       future: _usersRef.child(post['userId']).once(),
+          //       builder: (context, AsyncSnapshot<DatabaseEvent> userSnapshot) {
+          //         if (!userSnapshot.hasData || userSnapshot.data!.snapshot.value == null) {
+          //           return SizedBox.shrink();
+          //         }
+          //
+          //         Map<dynamic, dynamic> user = userSnapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+          //
+          //         return Padding(
+          //           padding: const EdgeInsets.all(8.0),
+          //           child: Card(
+          //             shape: RoundedRectangleBorder(
+          //               borderRadius: BorderRadius.circular(15.0),
+          //             ),
+          //             elevation: 5,
+          //             child: Column(
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 Padding(
+          //                   padding: const EdgeInsets.all(8.0),
+          //                   child: Row(
+          //                     children: [
+          //                       CircleAvatar(
+          //                         radius: 20,
+          //                         backgroundImage: user['userProfileImage'] != null && user['userProfileImage'].toString().isNotEmpty
+          //                             ? NetworkImage(user['userProfileImage'] as String)
+          //                             : AssetImage('assets/profile_placeholder.png') as ImageProvider,
+          //                       ),
+          //                       SizedBox(width: 10),
+          //                       Text(
+          //                         user['userName'] ?? 'Unknown User',
+          //                         style: TextStyle(
+          //                           fontWeight: FontWeight.bold,
+          //                           fontSize: 16,
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(height: 10),
+          //                 Image.network(
+          //                   post['postImageUrl'] ?? '',
+          //                   fit: BoxFit.cover,
+          //                   width: double.infinity,
+          //                   height: 250,
+          //                   errorBuilder: (context, error, stackTrace) {
+          //                     return Text('Error loading image');
+          //                   },
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.all(8.0),
+          //                   child: Row(
+          //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                     children: [
+          //                       Row(
+          //                         children: [
+          //                           IconButton(
+          //                             icon: Icon(
+          //                               post['likes'] != null && (post['likes'] as Map<dynamic, dynamic>).containsKey(FirebaseAuth.instance.currentUser!.uid)
+          //                                   ? Icons.favorite
+          //                                   : Icons.favorite_border,
+          //                             ),
+          //                             onPressed: () {
+          //                               String userId = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+          //                               _handleLike(post['postId'], userId); // Pass user ID to handle like
+          //                             },
+          //                           ),
+          //                           Text(
+          //                             post['likeCount']?.toString() ?? '0', // Like count
+          //                             style: TextStyle(fontSize: 16),
+          //                           ),
+          //                         ],
+          //                       ),
+          //                       Row(
+          //                         children: [
+          //                           IconButton(
+          //                             icon: Icon(Icons.comment_outlined),
+          //                             onPressed: () {
+          //                               // Navigate to the comment screen
+          //                               Navigator.push(
+          //                                 context,
+          //                                 MaterialPageRoute(
+          //                                   builder: (context) => CommentsScreen(postId: post['postId']),
+          //                                 ),
+          //                               );
+          //                             },
+          //                           ),
+          //                           Text(
+          //                             post['commentCount'] != null ? post['commentCount'].toString() : '0', // Fallback to '0' if null
+          //                             style: TextStyle(fontSize: 16),
+          //                           ),
+          //                         ],
+          //                       ),
+          //
+          //                       IconButton(
+          //                         icon: Icon(Icons.share_outlined),
+          //                         onPressed: () {
+          //                           _handleShare(post['postImageUrl']);
+          //                         },
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.all(8.0),
+          //                   child: Text(
+          //                     post['caption'] ?? '',
+          //                     style: TextStyle(
+          //                       fontSize: 16,
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         );
+          //       },
+          //     );
+          //   },
+          // );
+
           return ListView.builder(
             itemCount: postList.length,
             itemBuilder: (context, index) {
@@ -98,6 +224,24 @@ class _HomeTabState extends State<HomeTab> {
                               return Text('Error loading image');
                             },
                           ),
+                          // Location Display Section
+                          if (post['locationName'] != null && post['locationName'] != null) // Check if location is available
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.location_on, color: Colors.red), // Location icon
+                                  SizedBox(width: 5),
+                                  Text(
+                                    post['locationName'], // Display the location name
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
@@ -142,7 +286,6 @@ class _HomeTabState extends State<HomeTab> {
                                     ),
                                   ],
                                 ),
-
                                 IconButton(
                                   icon: Icon(Icons.share_outlined),
                                   onPressed: () {
@@ -169,6 +312,7 @@ class _HomeTabState extends State<HomeTab> {
               );
             },
           );
+
         },
       ),
     );
