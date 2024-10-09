@@ -5,8 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'location_search.dart'; // Import the location search screen
 
 class PostTab extends StatefulWidget {
   @override
@@ -22,8 +22,9 @@ class _PostTabState extends State<PostTab> {
 
   File? _selectedImage;
   bool _isLoading = false;
-  String? _location; // Variable to store location
   String? _locationName; // Variable to store location name (city)
+  double? _latitude; // Variable to store latitude
+  double? _longitude; // Variable to store longitude
 
   Future<void> _pickImage() async {
     final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -34,55 +35,10 @@ class _PostTabState extends State<PostTab> {
     }
   }
 
-  Future<void> _getCurrentLocation() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      // Request permission
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permission was denied
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Location permissions are denied')),
-        );
-        return;
-      }
-    }
-
-    // Check if permission is granted
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Location permissions are permanently denied. Please enable them in settings.')),
-      );
-      return;
-    }
-
-    // If permissions are granted, get the location
-    try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        _location = '${position.latitude}, ${position.longitude}'; // Store location as string
-      });
-
-      // Get the location name (city)
-      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-      if (placemarks.isNotEmpty) {
-        _locationName = placemarks[0].locality; // Get the city name
-        print('Location Name: $_locationName');
-      }
-    } catch (e) {
-      print('Error getting location: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error getting location: $e')),
-      );
-    }
-  }
-
   Future<void> _uploadPost() async {
     if (_selectedImage == null || _captionController.text.isEmpty || _locationName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an image, write a caption, and allow location access.')),
+        SnackBar(content: Text('Please select an image, write a caption, and tag a location.')),
       );
       return;
     }
@@ -111,8 +67,9 @@ class _PostTabState extends State<PostTab> {
           'postImageUrl': downloadUrl,
           'timestamp': DateTime.now().toIso8601String(),
           'userId': userId,
-          'location': _location, // Save coordinates
           'locationName': _locationName, // Save city name
+          'latitude': _latitude, // Save latitude
+          'longitude': _longitude, // Save longitude
         });
 
         // Success
@@ -124,8 +81,9 @@ class _PostTabState extends State<PostTab> {
         _captionController.clear();
         setState(() {
           _selectedImage = null;
-          _location = null; // Clear location
           _locationName = null; // Clear location name
+          _latitude = null; // Clear latitude
+          _longitude = null; // Clear longitude
         });
 
         Navigator.pushReplacementNamed(context, '/home');
@@ -140,6 +98,14 @@ class _PostTabState extends State<PostTab> {
         _isLoading = false;
       });
     }
+  }
+
+  void _selectLocation(String locationName, double latitude, double longitude) {
+    setState(() {
+      _locationName = locationName;
+      _latitude = latitude;
+      _longitude = longitude;
+    });
   }
 
   @override
@@ -181,8 +147,16 @@ class _PostTabState extends State<PostTab> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _getCurrentLocation, // Get current location
-              child: Text('Get Current Location'),
+              onPressed: () {
+                // Navigate to location search screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LocationSearchScreen(onSelectLocation: _selectLocation),
+                  ),
+                );
+              },
+              child: Text('Tag Location'),
             ),
             SizedBox(height: 20),
             if (_locationName != null) // Display the location name (city) if available
