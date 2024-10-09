@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'edit_profile_screen.dart';  // Import your EditProfileScreen
+import 'edit_profile_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -16,11 +16,13 @@ class _ProfileTabState extends State<ProfileTab> {
   String? userBio;
   String? userProfileImage;
   String? userEmail;
+  int postCount = 0; // Variable to hold the actual post count
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadUserPostsCount(); // Load the post count when the screen initializes
   }
 
   // Real-time listener for user data changes
@@ -49,6 +51,32 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
+  // Fetch and count user's posts
+  void _loadUserPostsCount() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String userId = currentUser.uid;
+      DatabaseReference postsRef = _database.ref('posts');
+
+      // Query to get posts for the current user
+      postsRef.orderByChild('userId').equalTo(userId).onValue.listen((DatabaseEvent event) {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> posts = event.snapshot.value as Map;
+          setState(() {
+            postCount = posts.length; // Set the count of the user's posts
+          });
+        } else {
+          setState(() {
+            postCount = 0; // No posts found, set count to 0
+          });
+        }
+      }, onError: (error) {
+        print('Error loading post count: $error');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +101,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     radius: 50,
                     backgroundImage: userProfileImage != null
                         ? NetworkImage(userProfileImage!)
-                        : AssetImage('assets/profile_placeholder.png')
-                    as ImageProvider,
+                        : AssetImage('assets/profile_placeholder.png') as ImageProvider,
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -100,7 +127,7 @@ class _ProfileTabState extends State<ProfileTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatColumn('Posts', '24'),
+                _buildStatColumn('Posts', postCount.toString()), // Show actual post count
                 _buildStatColumn('Followers', '2.1K'),
                 _buildStatColumn('Following', '350'),
               ],
@@ -110,7 +137,6 @@ class _ProfileTabState extends State<ProfileTab> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to EditProfileScreen
                   Navigator.push(
                       context,
                       MaterialPageRoute(
