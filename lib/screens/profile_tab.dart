@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'edit_profile_screen.dart';
+import 'user_posts_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class _ProfileTabState extends State<ProfileTab> {
   String? userBio;
   String? userProfileImage;
   String? userEmail;
+  String? userId;
   int postCount = 0; // Variable to hold the actual post count
 
   @override
@@ -30,7 +32,7 @@ class _ProfileTabState extends State<ProfileTab> {
     User? currentUser = _auth.currentUser;
 
     if (currentUser != null) {
-      String userId = currentUser.uid;
+      userId = currentUser.uid;
       DatabaseReference userRef = _database.ref('users/$userId');
 
       // Set a real-time listener using onValue
@@ -127,7 +129,18 @@ class _ProfileTabState extends State<ProfileTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatColumn('Posts', postCount.toString()), // Show actual post count
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to UserPostsScreen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserPostsScreen(userId: userId!),
+                      ),
+                    );
+                  },
+                  child: _buildStatColumn('Posts', postCount.toString()), // Show actual post count
+                ),
                 _buildStatColumn('Followers', '2.1K'),
                 _buildStatColumn('Following', '350'),
               ],
