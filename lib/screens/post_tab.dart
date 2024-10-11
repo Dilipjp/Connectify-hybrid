@@ -74,7 +74,7 @@ class _PostTabState extends State<PostTab> {
 
         // Success
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Post uploaded successfully!')),
+          SnackBar(content: Text('Post uploaded successfully!123')),
         );
 
         // Clear fields
