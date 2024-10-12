@@ -14,6 +14,23 @@ class _SignInScreenState extends State<SignInScreen> {
   String emailError = '';
   String passwordError = '';
 
+
+  // Show loading dialog
+  void _showLoadingSpinner(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog
+      builder: (context) => Center(
+        child: CircularProgressIndicator(), // Loading spinner
+      ),
+    );
+  }
+
+  // Dismiss loading dialog
+  void _hideLoadingSpinner(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
   Future<void> _signInWithEmailPassword() async {
     setState(() {
       // Reset error messages before validation
@@ -45,12 +62,15 @@ class _SignInScreenState extends State<SignInScreen> {
       });
       return;
     }
-
+    // Show loading spinner
+    _showLoadingSpinner(context);
     try {
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
+      // Hide the loading spinner
+      _hideLoadingSpinner(context);
       // Navigate to home screen after successful sign-in
       Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {

@@ -5,6 +5,7 @@ import 'screens/sign_in_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/forgot_password_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,24 +55,6 @@ class AuthWrapper extends StatelessWidget {
           return SignInScreen(); // User is not signed in
         }
       },
-    );
-  }
-}
-
-class SplashScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(), // Loading indicator
-            SizedBox(height: 20),
-            Text('Loading...'), // Splash screen text
-          ],
-        ),
-      ),
     );
   }
 }

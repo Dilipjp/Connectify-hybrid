@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'edit_profile_screen.dart';
+import 'user_posts_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -15,25 +17,26 @@ class _ProfileTabState extends State<ProfileTab> {
   String? userBio;
   String? userProfileImage;
   String? userEmail;
+  String? userId;
+  int postCount = 0; // Variable to hold the actual post count
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadUserPostsCount(); // Load the post count when the screen initializes
   }
 
-  Future<void> _loadUserData() async {
-    // Get the current user
+  // Real-time listener for user data changes
+  void _loadUserData() async {
     User? currentUser = _auth.currentUser;
 
     if (currentUser != null) {
-      String userId = currentUser.uid;
-
-      // Reference to the user's data in the database
+      userId = currentUser.uid;
       DatabaseReference userRef = _database.ref('users/$userId');
 
-      // Listen to the user's data and update the UI when data changes
-      userRef.once().then((DatabaseEvent event) {
+      // Set a real-time listener using onValue
+      userRef.onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> userData = event.snapshot.value as Map;
 
@@ -44,8 +47,34 @@ class _ProfileTabState extends State<ProfileTab> {
             userEmail = userData['userEmail'] ?? 'No email available';
           });
         }
-      }).catchError((error) {
+      }, onError: (error) {
         print('Error loading user data: $error');
+      });
+    }
+  }
+
+  // Fetch and count user's posts
+  void _loadUserPostsCount() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String userId = currentUser.uid;
+      DatabaseReference postsRef = _database.ref('posts');
+
+      // Query to get posts for the current user
+      postsRef.orderByChild('userId').equalTo(userId).onValue.listen((DatabaseEvent event) {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> posts = event.snapshot.value as Map;
+          setState(() {
+            postCount = posts.length; // Set the count of the user's posts
+          });
+        } else {
+          setState(() {
+            postCount = 0; // No posts found, set count to 0
+          });
+        }
+      }, onError: (error) {
+        print('Error loading post count: $error');
       });
     }
   }
@@ -55,8 +84,9 @@ class _ProfileTabState extends State<ProfileTab> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Profile',
-          style: TextStyle(color: Colors.white), // Set text color to white
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black,
         elevation: 0,
@@ -67,20 +97,13 @@ class _ProfileTabState extends State<ProfileTab> {
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 20),
-              // decoration: BoxDecoration(
-              //   color: Colors.purple,
-              //   borderRadius: BorderRadius.vertical(
-              //     bottom: Radius.circular(30),
-              //   ),
-              // ),
               child: Column(
                 children: [
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: userProfileImage != null
                         ? NetworkImage(userProfileImage!)
-                        : AssetImage('assets/profile_placeholder.png')
-                    as ImageProvider,
+                        : AssetImage('assets/profile_placeholder.png') as ImageProvider,
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -106,7 +129,18 @@ class _ProfileTabState extends State<ProfileTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatColumn('Posts', '24'),
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to UserPostsScreen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserPostsScreen(userId: userId!),
+                      ),
+                    );
+                  },
+                  child: _buildStatColumn('Posts', postCount.toString()), // Show actual post count
+                ),
                 _buildStatColumn('Followers', '2.1K'),
                 _buildStatColumn('Following', '350'),
               ],
@@ -116,7 +150,13 @@ class _ProfileTabState extends State<ProfileTab> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () {
-                  // Edit profile action
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfileScreen())).then((_) {
+                    // Trigger data reload after returning from EditProfileScreen
+                    _loadUserData();
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -143,7 +183,7 @@ class _ProfileTabState extends State<ProfileTab> {
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    await _auth.signOut(); // Sign out from Firebase
+                    await _auth.signOut();
                     Navigator.pushReplacementNamed(context, '/sign-in');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -171,12 +211,6 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             SizedBox(height: 30),
-            // Center(
-            //   child: Text(
-            //     'No posts yet',
-            //     style: TextStyle(color: Colors.grey, fontSize: 16),
-            //   ),
-            // ),
           ],
         ),
       ),
