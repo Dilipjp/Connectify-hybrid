@@ -191,36 +191,79 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
         itemCount: userPosts.length,
         itemBuilder: (context, index) {
           Map<dynamic, dynamic> post = userPosts[index];
-          return ListTile(
-            title: Text(post['caption']),
-            // subtitle: Text(post['timestamp'].toString()), // You can format timestamp here
-            leading: post['postImageUrl'] != null
-                ? Image.network(post['postImageUrl'])
-                : SizedBox.shrink(),
-            trailing: PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'edit') {
-                  _editPost(post['postId'], post['caption'], post['postImageUrl']);
-                } else if (value == 'delete') {
-                  _deletePost(post['postId']);
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Edit'),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Delete'),
-                  ),
-                ];
-              },
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          post['caption'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        PopupMenuButton<String>(
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              _editPost(post['postId'], post['caption'], post['postImageUrl']);
+                            } else if (value == 'delete') {
+                              _deletePost(post['postId']);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              ),
+                            ];
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    if (post['postImageUrl'] != null && post['postImageUrl'].toString().isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          post['postImageUrl'],
+                          fit: BoxFit.cover,
+                          height: 200,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Text('Error loading image');
+                          },
+                        ),
+                      ),
+                    SizedBox(height: 10),
+                    // Text(
+                    //   post['timestamp'] != null ? _formatTimestamp(post['timestamp']) : '',
+                    //   style: TextStyle(color: Colors.grey),
+                    // ),
+                  ],
+                ),
+              ),
             ),
           );
         },
       ),
+
     );
   }
 }

@@ -65,7 +65,7 @@ class _PostTabState extends State<PostTab> {
           'postId': postId,
           'caption': _captionController.text,
           'postImageUrl': downloadUrl,
-          'timestamp': DateTime.now().toIso8601String(),
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
           'userId': userId,
           'locationName': _locationName, // Save city name
           'latitude': _latitude, // Save latitude

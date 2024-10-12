@@ -43,6 +43,8 @@ dependencies:
   intl: ^0.18.0
   geolocator: any
   geocoding: any
+#  google_maps_webservice: ^0.0.20-nullsafety.5
+#  flutter_google_places: ^0.3.0
 
 
 
