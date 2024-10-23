@@ -18,13 +18,17 @@ class _ProfileTabState extends State<ProfileTab> {
   String? userProfileImage;
   String? userEmail;
   String? userId;
-  int postCount = 0; // Variable to hold the actual post count
+  int postCount = 0;
+  int followingCount = 0;
+  int followersCount = 0;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _loadUserPostsCount(); // Load the post count when the screen initializes
+    _loadUserPostsCount();
+    _loadFollowingCount();
+    _loadFollowersCount();
   }
 
   // Real-time listener for user data changes
@@ -78,6 +82,68 @@ class _ProfileTabState extends State<ProfileTab> {
       });
     }
   }
+
+  // Fetch and count user's following count
+  void _loadFollowingCount() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String currentUserId = currentUser.uid;
+      DatabaseReference usersRef = _database.ref('users');
+
+      int followingCount = 0;
+
+      usersRef.onValue.listen((DatabaseEvent event) {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> usersData = event.snapshot.value as Map;
+
+          // Iterate over all users to check if the current user is a follower
+          usersData.forEach((userId, userData) {
+            if (userData['followers'] != null && userData['followers'].containsKey(currentUserId)) {
+              followingCount++;
+            }
+          });
+
+          setState(() {
+            // Update the state with the count of users the current user is following
+            this.followingCount = followingCount;
+          });
+        } else {
+          setState(() {
+            this.followingCount = 0;
+          });
+        }
+      }, onError: (error) {
+        print('Error loading following count: $error');
+      });
+    }
+  }
+  void _loadFollowersCount() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String currentUserId = currentUser.uid;
+      DatabaseReference followersRef = _database.ref('users/$currentUserId/followers');
+
+      followersRef.onValue.listen((DatabaseEvent event) {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> followersData = event.snapshot.value as Map;
+          setState(() {
+            // Update the state with the count of followers
+            this.followersCount = followersData.length;
+          });
+        } else {
+          setState(() {
+            this.followersCount = 0;
+          });
+        }
+      }, onError: (error) {
+        print('Error loading followers count: $error');
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +205,10 @@ class _ProfileTabState extends State<ProfileTab> {
                       ),
                     );
                   },
-                  child: _buildStatColumn('Posts', postCount.toString()), // Show actual post count
+                  child: _buildStatColumn('Posts', postCount.toString()),
                 ),
-                _buildStatColumn('Followers', '2.1K'),
-                _buildStatColumn('Following', '350'),
+                _buildStatColumn('Followers', followersCount.toString()),
+                _buildStatColumn('Following', followingCount.toString()),
               ],
             ),
             SizedBox(height: 20),
