@@ -15,7 +15,7 @@ class CommentsScreen extends StatefulWidget {
 class _CommentsScreenState extends State<CommentsScreen> {
   final TextEditingController _commentController = TextEditingController();
   final DatabaseReference _commentsRef = FirebaseDatabase.instance.ref('posts');
-  List<Map<String, dynamic>> _commentsList = []; // Local comments list
+  List<Map<String, dynamic>> _commentsList = [];
 
   @override
   void dispose() {
@@ -23,7 +23,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
     super.dispose();
   }
 
-  // Function to add a comment
   void _addComment() {
     if (_commentController.text.isNotEmpty) {
       final comment = {
@@ -35,35 +34,28 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
       DatabaseReference postRef = _commentsRef.child(widget.postId);
 
-      // Add comment to the database
       postRef
           .child('comments')
           .push()
           .set(comment)
           .then((_) {
-        // Clear the comment input field
         _commentController.clear();
 
-        // Increment comment count
         postRef.child('commentCount').runTransaction((mutableData) {
-          int currentCount = (mutableData as int? ?? 0); // Cast mutableData to int or default to 0
-          mutableData = currentCount + 1; // Increment the count
-          return Transaction.success(mutableData); // Return the updated data
+          int currentCount = (mutableData as int? ?? 0);
+          mutableData = currentCount + 1;
+          return Transaction.success(mutableData);
         });
 
-        // Update the local comments list
         setState(() {
-          _commentsList.add(comment); // Add new comment to the local list
+          _commentsList.add(comment);
         });
       });
     }
   }
 
-  // Function to fetch comments
   Stream<List<Map<String, dynamic>>> _fetchComments() async* {
     final event = await _commentsRef.child(widget.postId).child('comments').once();
-
-    // If there are no comments, return an empty list
     if (event.snapshot.value == null) {
       yield [];
       return;
@@ -72,30 +64,30 @@ class _CommentsScreenState extends State<CommentsScreen> {
     final commentsMap = Map<String, dynamic>.from(event.snapshot.value as Map);
     List<Map<String, dynamic>> commentsList = [];
 
-    // Iterate through each comment
     for (var entry in commentsMap.entries) {
       final commentData = Map<String, dynamic>.from(entry.value);
-      final userId = commentData['userId']; // Get the userId for the comment
+      final userId = commentData['userId'];
 
-      // Fetch user data based on userId
       final userSnapshot = await FirebaseDatabase.instance.ref().child('users').child(userId).once();
       final userData = userSnapshot.snapshot.value as Map;
 
-      // Add userName and userProfileImage to comment data
       commentData['userName'] = userData['userName'];
       commentData['userProfileImage'] = userData['userProfileImage'];
 
       commentsList.add(commentData);
     }
 
-    yield commentsList; // Yield the comments list with user data
+    yield commentsList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Comments'),
+        title: Text('Comments',style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
@@ -104,17 +96,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
               stream: _fetchComments(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator()); // Show loading spinner while waiting
+                  return Center(child: CircularProgressIndicator());
                 }
 
-                // Check if there are no comments
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No comments yet')); // Display message if no comments
+                  return Center(child: Text('No comments yet', style: TextStyle(color: Colors.grey)));
                 }
 
                 final comments = snapshot.data!;
-
-                // Merge local comments with fetched comments
                 final allComments = [..._commentsList, ...comments];
 
                 return ListView.builder(
@@ -122,27 +111,41 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   itemBuilder: (context, index) {
                     final comment = allComments[index];
                     final commentText = comment['commentText'];
-                    final userName = comment['userName'] ?? 'Anonymous'; // Fallback if userName is missing
-                    final userProfileImage = comment['userProfileImage'] ?? ''; // Fallback if profileImage is missing
+                    final userName = comment['userName'] ?? 'Anonymous';
+                    final userProfileImage = comment['userProfileImage'] ?? '';
                     final timestamp = comment['timestamp'];
                     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
                     final timeFormatted = DateFormat('MMM d, hh:mm a').format(dateTime);
 
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: userProfileImage.isNotEmpty
-                            ? NetworkImage(userProfileImage) as ImageProvider<Object>
-                            : AssetImage('assets/images/default_avatar.png'), // Default avatar
-                      ),
-                      title: Text(userName),
-                      subtitle: Column(
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(commentText),
-                          SizedBox(height: 4),
-                          Text(
-                            timeFormatted,
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundImage: userProfileImage.isNotEmpty
+                                ? NetworkImage(userProfileImage) // Network image
+                                : AssetImage('assets/images/default_avatar.png') as ImageProvider, // Default avatar
+                          ),
+
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(userName, style: TextStyle(fontWeight: FontWeight.bold)),
+                                    SizedBox(width: 10),
+                                    Text(timeFormatted, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                  ],
+                                ),
+                                SizedBox(height: 4),
+                                Text(commentText, style: TextStyle(fontSize: 14)),
+                                Divider(),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -153,20 +156,32 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _commentController,
                     decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       hintText: 'Add a comment...',
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _addComment,
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: _addComment,
+                  child: CircleAvatar(
+                    radius: 25,
+                    backgroundColor: Colors.black,
+                    child: Icon(Icons.send, color: Colors.white),
+                  ),
                 ),
               ],
             ),
