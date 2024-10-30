@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'edit_profile_screen.dart';
 import 'user_posts_screen.dart';
+import 'all_posts_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -18,6 +19,7 @@ class _ProfileTabState extends State<ProfileTab> {
   String? userProfileImage;
   String? userEmail;
   String? userId;
+  String? userRole;
   int postCount = 0;
   int followingCount = 0;
   int followersCount = 0;
@@ -49,6 +51,7 @@ class _ProfileTabState extends State<ProfileTab> {
             userBio = userData['userBio'] ?? 'No bio available';
             userProfileImage = userData['userProfileImage'] ?? 'assets/profile_placeholder.png';
             userEmail = userData['userEmail'] ?? 'No email available';
+            userRole = userData['userRole'] ?? 'User';
           });
         }
       }, onError: (error) {
@@ -244,6 +247,38 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             SizedBox(height: 20),
+            // All Posts button (only for Moderators)
+            if (userRole == 'moderator')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AllPostsScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Posts',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 20),
+            //
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
