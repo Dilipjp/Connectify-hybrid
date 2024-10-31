@@ -26,6 +26,7 @@ class _ProfileTabState extends State<ProfileTab> {
   int postCount = 0;
   int followingCount = 0;
   int followersCount = 0;
+  List<Map<String, dynamic>> warnings = [];
 
   @override
   void initState() {
@@ -145,6 +146,58 @@ class _ProfileTabState extends State<ProfileTab> {
         }
       }, onError: (error) {
         print('Error loading followers count: $error');
+      });
+    }
+  }
+
+  // load warnings;
+  void _loadWarnings() async {
+    if (userId != null) {
+      DatabaseReference warningsRef = _database.ref('users/$userId/userWarnings');
+
+      warningsRef.onValue.listen((DatabaseEvent event) async {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> warningsData = event.snapshot.value as Map;
+          List<Map<String, dynamic>> loadedWarnings = [];
+
+          for (var warningKey in warningsData.keys) {
+            var warning = warningsData[warningKey];
+            String postId = warning['postId'];
+            String message = warning['message'];
+
+            // Fetch caption from posts node
+            DatabaseReference postRef = _database.ref('posts/$postId');
+            DataSnapshot postSnapshot = await postRef.get();
+
+            if (postSnapshot.exists) {
+              String caption = postSnapshot.child('caption').value as String;
+              loadedWarnings.add({
+                'message': message,
+                'caption': caption,
+                'postId': postId,
+              });
+            } else {
+              loadedWarnings.add({
+                'message': message,
+                'caption': 'Caption not found', // Fallback in case the post is missing
+                'postId': postId,
+              });
+            }
+          }
+
+          setState(() {
+            warnings = loadedWarnings;
+          });
+
+          print("Warnings with captions loaded: $warnings");
+        } else {
+          setState(() {
+            warnings = [];
+          });
+          print("No warnings found for the user.");
+        }
+      }, onError: (error) {
+        print('Error loading warnings: $error');
       });
     }
   }
