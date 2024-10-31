@@ -260,6 +260,27 @@ class _ProfileTabState extends State<ProfileTab> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: warnings.length,
+                            itemBuilder: (context, index) {
+                              final warning = warnings[index] as Map<String, dynamic>; // Cast to Map<String, dynamic>
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                child: Text(
+                                  "- ${warning['message']} (Caption: ${warning['caption']})",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
