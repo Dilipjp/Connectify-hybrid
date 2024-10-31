@@ -204,11 +204,53 @@ class _ModeratorUserPostsScreenState extends State<ModeratorUserPostsScreen> {
           },
         );
       } else {
+        // No warning exists, show dialog to send a new one
+        TextEditingController warningController = TextEditingController(text: "Please review the content of this post.");
 
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Send Warning'),
+              content: TextField(
+                controller: warningController,
+                decoration: InputDecoration(labelText: 'Warning Message'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Get the current timestamp
+                    int timestamp = DateTime.now().millisecondsSinceEpoch;
 
+                    // Save warning message to userWarnings
+                    DatabaseReference userWarningsRef = warningRef.push();
+                    userWarningsRef.set({
+                      'message': warningController.text,
+                      'postId': postId,
+                      'timestamp': timestamp,
+                    }).then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Warning sent successfully')),
+                      );
+                      Navigator.of(context).pop();
+                    }).catchError((error) {
+                      print('Error sending warning: $error');
+                    });
+                  },
+                  child: Text('Send'),
+                ),
+              ],
+            );
+          },
+        );
       }
-  }
-
-
+      });
+    }
 
 
