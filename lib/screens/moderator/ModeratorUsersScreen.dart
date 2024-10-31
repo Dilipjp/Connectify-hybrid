@@ -36,3 +36,45 @@ class _ModeratorUsersScreenState extends State<ModeratorUsersScreen> {
       }
     });
   }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Moderator Users'),
+        backgroundColor: Colors.black,
+      ),
+      body: userList.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+        itemCount: userList.length,
+        itemBuilder: (context, index) {
+          final user = userList[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(user['userProfileImage'] ?? 'assets/profile_placeholder.png'),
+            ),
+            title: Text(user['userName'] ?? 'Unknown User'),
+            subtitle: Text('Status: ${user['userStatus'] ?? 'Unknown'}'),
+            trailing: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ModeratorUserPostsScreen(userId: user['userId']),
+                  ),
+                );
+              },
+              child: Text('View Posts', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
