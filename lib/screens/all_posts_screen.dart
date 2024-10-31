@@ -4,16 +4,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class UserPostsScreen extends StatefulWidget {
-  final String userId;
+class AllPostsScreen extends StatefulWidget {
+  // final String userId;
 
-  UserPostsScreen({required this.userId});
+  AllPostsScreen();
 
   @override
-  _UserPostsScreenState createState() => _UserPostsScreenState();
+  _AllPostsScreenState createState() => _AllPostsScreenState();
 }
 
-class _UserPostsScreenState extends State<UserPostsScreen> {
+class _AllPostsScreenState extends State<AllPostsScreen> {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   List<Map<dynamic, dynamic>> userPosts = [];
@@ -44,7 +44,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
   void _loadUserPosts() {
     DatabaseReference postsRef = _database.ref('posts');
 
-    postsRef.orderByChild('userId').equalTo(widget.userId).onValue.listen((DatabaseEvent event) {
+    postsRef.onValue.listen((DatabaseEvent event) {
       if (event.snapshot.exists) {
         Map<dynamic, dynamic> posts = event.snapshot.value as Map<dynamic, dynamic>;
         setState(() {

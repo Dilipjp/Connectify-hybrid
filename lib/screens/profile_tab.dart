@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'edit_profile_screen.dart';
 import 'user_posts_screen.dart';
+import 'all_posts_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -19,13 +20,21 @@ class _ProfileTabState extends State<ProfileTab> {
   String? userEmail;
   String? userId;
   String? userRole;
+<<<<<<< HEAD
   int postCount = 0; // Variable to hold the actual post count
+=======
+  int postCount = 0;
+  int followingCount = 0;
+  int followersCount = 0;
+>>>>>>> 2994c7ae2704e7621afc8a0333e1a12c814b6d17
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _loadUserPostsCount(); // Load the post count when the screen initializes
+    _loadUserPostsCount();
+    _loadFollowingCount();
+    _loadFollowersCount();
   }
 
   // Real-time listener for user data changes
@@ -80,6 +89,68 @@ class _ProfileTabState extends State<ProfileTab> {
       });
     }
   }
+
+  // Fetch and count user's following count
+  void _loadFollowingCount() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String currentUserId = currentUser.uid;
+      DatabaseReference usersRef = _database.ref('users');
+
+      int followingCount = 0;
+
+      usersRef.onValue.listen((DatabaseEvent event) {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> usersData = event.snapshot.value as Map;
+
+          // Iterate over all users to check if the current user is a follower
+          usersData.forEach((userId, userData) {
+            if (userData['followers'] != null && userData['followers'].containsKey(currentUserId)) {
+              followingCount++;
+            }
+          });
+
+          setState(() {
+            // Update the state with the count of users the current user is following
+            this.followingCount = followingCount;
+          });
+        } else {
+          setState(() {
+            this.followingCount = 0;
+          });
+        }
+      }, onError: (error) {
+        print('Error loading following count: $error');
+      });
+    }
+  }
+  void _loadFollowersCount() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      String currentUserId = currentUser.uid;
+      DatabaseReference followersRef = _database.ref('users/$currentUserId/followers');
+
+      followersRef.onValue.listen((DatabaseEvent event) {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> followersData = event.snapshot.value as Map;
+          setState(() {
+            // Update the state with the count of followers
+            this.followersCount = followersData.length;
+          });
+        } else {
+          setState(() {
+            this.followersCount = 0;
+          });
+        }
+      }, onError: (error) {
+        print('Error loading followers count: $error');
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -141,10 +212,10 @@ class _ProfileTabState extends State<ProfileTab> {
                       ),
                     );
                   },
-                  child: _buildStatColumn('Posts', postCount.toString()), // Show actual post count
+                  child: _buildStatColumn('Posts', postCount.toString()),
                 ),
-                _buildStatColumn('Followers', '2.1K'),
-                _buildStatColumn('Following', '350'),
+                _buildStatColumn('Followers', followersCount.toString()),
+                _buildStatColumn('Following', followingCount.toString()),
               ],
             ),
             SizedBox(height: 20),
@@ -181,15 +252,26 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
             SizedBox(height: 20),
             // All Posts button (only for Moderators)
+<<<<<<< HEAD
             if (userRole == 'User')
+=======
+            if (userRole == 'moderator')
+>>>>>>> 2994c7ae2704e7621afc8a0333e1a12c814b6d17
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: ElevatedButton(
                   onPressed: () {
+<<<<<<< HEAD
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(builder: (context) => AllPostsScreen()),
                     // );
+=======
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AllPostsScreen()),
+                    );
+>>>>>>> 2994c7ae2704e7621afc8a0333e1a12c814b6d17
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -211,6 +293,10 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             SizedBox(height: 20),
+<<<<<<< HEAD
+=======
+            //
+>>>>>>> 2994c7ae2704e7621afc8a0333e1a12c814b6d17
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
