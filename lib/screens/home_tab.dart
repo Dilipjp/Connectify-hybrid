@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:intl/intl.dart';
 import 'comment_screen.dart'; // Import the new CommentsScreen
 
 
 
 class HomeTab extends StatefulWidget {
+  const HomeTab({super.key});
+
   @override
   _HomeTabState createState() => _HomeTabState();
 }
@@ -21,7 +22,7 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
+        title: const Center(
           child: Text(
             'Home',
             style: TextStyle(color: Colors.white),
@@ -34,11 +35,11 @@ class _HomeTabState extends State<HomeTab> {
         stream: _postsRef.onValue,
         builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
-            return Center(child: Text('No posts yet'));
+            return const Center(child: Text('No posts yet'));
           }
 
           Map<dynamic, dynamic> posts = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
@@ -178,7 +179,7 @@ class _HomeTabState extends State<HomeTab> {
                 future: _usersRef.child(post['userId']).once(),
                 builder: (context, AsyncSnapshot<DatabaseEvent> userSnapshot) {
                   if (!userSnapshot.hasData || userSnapshot.data!.snapshot.value == null) {
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   }
 
                   Map<dynamic, dynamic> user = userSnapshot.data!.snapshot.value as Map<dynamic, dynamic>;
@@ -201,12 +202,12 @@ class _HomeTabState extends State<HomeTab> {
                                   radius: 20,
                                   backgroundImage: user['userProfileImage'] != null && user['userProfileImage'].toString().isNotEmpty
                                       ? NetworkImage(user['userProfileImage'] as String)
-                                      : AssetImage('assets/profile_placeholder.png') as ImageProvider,
+                                      : const AssetImage('assets/profile_placeholder.png') as ImageProvider,
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   user['userName'] ?? 'Unknown User',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -214,14 +215,14 @@ class _HomeTabState extends State<HomeTab> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Image.network(
                             post['postImageUrl'] ?? '',
                             fit: BoxFit.cover,
                             width: double.infinity,
                             height: 250,
                             errorBuilder: (context, error, stackTrace) {
-                              return Text('Error loading image');
+                              return const Text('Error loading image');
                             },
                           ),
                           // Location Display Section
@@ -230,11 +231,11 @@ class _HomeTabState extends State<HomeTab> {
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
                                 children: [
-                                  Icon(Icons.location_on, color: Colors.red), // Location icon
-                                  SizedBox(width: 5),
+                                  const Icon(Icons.location_on, color: Colors.red), // Location icon
+                                  const SizedBox(width: 5),
                                   Text(
                                     post['locationName'], // Display the location name
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black54,
                                     ),
@@ -262,14 +263,14 @@ class _HomeTabState extends State<HomeTab> {
                                     ),
                                     Text(
                                       post['likeCount']?.toString() ?? '0', // Like count
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ],
                                 ),
                                 Row(
                                   children: [
                                     IconButton(
-                                      icon: Icon(Icons.comment_outlined),
+                                      icon: const Icon(Icons.comment_outlined),
                                       onPressed: () {
                                         // Navigate to the comment screen
                                         Navigator.push(
@@ -282,12 +283,12 @@ class _HomeTabState extends State<HomeTab> {
                                     ),
                                     Text(
                                       post['commentCount'] != null ? post['commentCount'].toString() : '0', // Fallback to '0' if null
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ],
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.share_outlined),
+                                  icon: const Icon(Icons.share_outlined),
                                   onPressed: () {
                                     _handleShare(post['postImageUrl']);
                                   },
@@ -299,7 +300,7 @@ class _HomeTabState extends State<HomeTab> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               post['caption'] ?? '',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),

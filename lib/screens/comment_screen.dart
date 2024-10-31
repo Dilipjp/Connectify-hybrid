@@ -15,7 +15,7 @@ class CommentsScreen extends StatefulWidget {
 class _CommentsScreenState extends State<CommentsScreen> {
   final TextEditingController _commentController = TextEditingController();
   final DatabaseReference _commentsRef = FirebaseDatabase.instance.ref('posts');
-  List<Map<String, dynamic>> _commentsList = [];
+  final List<Map<String, dynamic>> _commentsList = [];
 
   @override
   void dispose() {
@@ -84,10 +84,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Comments',style: TextStyle(color: Colors.white)),
+        title: const Text('Comments',style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
@@ -96,11 +96,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
               stream: _fetchComments(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No comments yet', style: TextStyle(color: Colors.grey)));
+                  return const Center(child: Text('No comments yet', style: TextStyle(color: Colors.grey)));
                 }
 
                 final comments = snapshot.data!;
@@ -126,24 +126,24 @@ class _CommentsScreenState extends State<CommentsScreen> {
                             radius: 25,
                             backgroundImage: userProfileImage.isNotEmpty
                                 ? NetworkImage(userProfileImage) // Network image
-                                : AssetImage('assets/images/default_avatar.png') as ImageProvider, // Default avatar
+                                : const AssetImage('assets/images/default_avatar.png') as ImageProvider, // Default avatar
                           ),
 
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
-                                    Text(userName, style: TextStyle(fontWeight: FontWeight.bold)),
-                                    SizedBox(width: 10),
-                                    Text(timeFormatted, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                    Text(userName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    const SizedBox(width: 10),
+                                    Text(timeFormatted, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                   ],
                                 ),
-                                SizedBox(height: 4),
-                                Text(commentText, style: TextStyle(fontSize: 14)),
-                                Divider(),
+                                const SizedBox(height: 4),
+                                Text(commentText, style: const TextStyle(fontSize: 14)),
+                                const Divider(),
                               ],
                             ),
                           ),
@@ -163,7 +163,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: TextField(
                     controller: _commentController,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       hintText: 'Add a comment...',
                       filled: true,
                       fillColor: Colors.grey[200],
@@ -174,10 +174,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 GestureDetector(
                   onTap: _addComment,
-                  child: CircleAvatar(
+                  child: const CircleAvatar(
                     radius: 25,
                     backgroundColor: Colors.black,
                     child: Icon(Icons.send, color: Colors.white),

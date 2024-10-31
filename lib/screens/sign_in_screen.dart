@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
@@ -20,7 +22,7 @@ class _SignInScreenState extends State<SignInScreen> {
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent closing the dialog
-      builder: (context) => Center(
+      builder: (context) => const Center(
         child: CircularProgressIndicator(), // Loading spinner
       ),
     );
@@ -91,7 +93,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Sign In',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -103,12 +105,12 @@ class _SignInScreenState extends State<SignInScreen> {
         elevation: 0,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              const Text(
                 "Welcome Back!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -117,34 +119,34 @@ class _SignInScreenState extends State<SignInScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 "Please sign in to continue.",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Email TextField with error message
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.email),
                   errorText: emailError.isNotEmpty ? emailError : null,
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Password TextField with error message
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
                   errorText: passwordError.isNotEmpty ? passwordError : null,
                 ),
                 obscureText: true,
@@ -157,7 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/forgot-password');
                   },
-                  child: Text(
+                  child: const Text(
                     "Forgot Password?",
                     style: TextStyle(
                       color: Colors.black,
@@ -166,19 +168,19 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Sign-In Button
               ElevatedButton(
                 onPressed: _signInWithEmailPassword,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Sign In',
                   style: TextStyle(
                     fontSize: 18,
@@ -189,19 +191,19 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
 
               if (errorMessage.isNotEmpty) ...[
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   errorMessage,
-                  style: TextStyle(color: Colors.red, fontSize: 14),
+                  style: const TextStyle(color: Colors.red, fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
               ],
 
-              SizedBox(height: 20), // Space between button and links
+              const SizedBox(height: 20), // Space between button and links
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Don't have an account?",
                     style: TextStyle(color: Colors.black, fontSize: 16),
                   ),
@@ -209,15 +211,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/sign-up');
                     },
-                    child: Text(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    ),
+                    child: const Text(
                       "Sign Up",
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     ),
                   ),
                 ],
