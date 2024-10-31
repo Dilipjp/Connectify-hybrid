@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
+
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
@@ -18,7 +20,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (value == null || value.isEmpty) {
       return 'Please enter your email address';
     }
-    final emailPattern = r'^[^@]+@[^@]+\.[^@]+$';
+    const emailPattern = r'^[^@]+@[^@]+\.[^@]+$';
     if (!RegExp(emailPattern).hasMatch(value)) {
       return 'Please enter a valid email address';
     }
@@ -54,7 +56,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Forgot Password',
           style: TextStyle(color: Colors.white), // Text color white
         ),
@@ -70,7 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Header
-              Text(
+              const Text(
                 'Reset Your Password',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -79,42 +81,42 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 'Enter your email address to receive a password reset link.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Email TextField with validation
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email Address',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
                 validator: _validateEmail, // Attach email validation
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Reset Password Button
               ElevatedButton(
                 onPressed: isLoading ? null : _resetPassword,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 child: isLoading
-                    ? CircularProgressIndicator(
+                    ? const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 )
-                    : Text(
+                    : const Text(
                   'Send Reset Link',
                   style: TextStyle(
                     fontSize: 18,
@@ -123,7 +125,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Status Message
               if (message.isNotEmpty)
@@ -135,14 +137,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     fontSize: 14,
                   ),
                 ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Back to Sign In link
               TextButton(
                 onPressed: () {
                   Navigator.pop(context); // Navigates back to Sign In screen
                 },
-                child: Text(
+                child: const Text(
                   'Back to Sign In',
                   style: TextStyle(
                     color: Colors.black,

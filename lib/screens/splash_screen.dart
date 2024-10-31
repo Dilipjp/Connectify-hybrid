@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -9,7 +11,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, '/sign-in');
     });
   }
@@ -27,10 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
               'assets/images/logo.jpeg', // Replace with your logo asset path
               height: 100, // Adjust the height to your preference
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // App name or welcome text
-            Text(
+            const Text(
               'Welcome to Connectify', // Replace with your app name
               style: TextStyle(
                 fontSize: 24,
@@ -38,10 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
             // Loading indicator
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // Loading spinner color
             ),
           ],

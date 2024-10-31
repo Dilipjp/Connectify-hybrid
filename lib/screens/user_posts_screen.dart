@@ -7,7 +7,7 @@ import 'dart:io';
 class UserPostsScreen extends StatefulWidget {
   final String userId;
 
-  UserPostsScreen({required this.userId});
+  const UserPostsScreen({super.key, required this.userId});
 
   @override
   _UserPostsScreenState createState() => _UserPostsScreenState();
@@ -23,7 +23,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent closing the dialog
-      builder: (context) => Center(
+      builder: (context) => const Center(
         child: CircularProgressIndicator(), // Loading spinner
       ),
     );
@@ -58,8 +58,8 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
 
   // Pick image from gallery
   Future<File?> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       return File(pickedImage.path);
@@ -94,15 +94,15 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Post'),
+          title: const Text('Edit Post'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: captionController,
-                decoration: InputDecoration(labelText: 'Caption'),
+                decoration: const InputDecoration(labelText: 'Caption'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
                   newImageFile = await _pickImage(); // Pick new image
@@ -110,7 +110,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                     imageUrlController.text = 'Image selected. Will be uploaded.'; // Show placeholder text
                   }
                 },
-                child: Text('Pick New Image'),
+                child: const Text('Pick New Image'),
               ),
             ],
           ),
@@ -119,7 +119,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -150,13 +150,13 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                   _hideLoadingSpinner(context);
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Post updated successfully')),
+                    const SnackBar(content: Text('Post updated successfully')),
                   );
                 }).catchError((error) {
                   print('Error updating post: $error');
                 });
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -172,7 +172,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
         userPosts.removeWhere((post) => post['postId'] == postId);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Post deleted successfully')),
+        const SnackBar(content: Text('Post deleted successfully')),
       );
     }).catchError((error) {
       print('Error deleting post: $error');
@@ -183,9 +183,9 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Posts', style: TextStyle(color: Colors.white)),
+        title: const Text('My Posts', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: ListView.builder(
         itemCount: userPosts.length,
@@ -209,7 +209,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                       children: [
                         Text(
                           post['caption'] ?? '',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -224,11 +224,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                           },
                           itemBuilder: (BuildContext context) {
                             return [
-                              PopupMenuItem(
+                              const PopupMenuItem(
                                 value: 'edit',
                                 child: Text('Edit'),
                               ),
-                              PopupMenuItem(
+                              const PopupMenuItem(
                                 value: 'delete',
                                 child: Text('Delete'),
                               ),
@@ -237,7 +237,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     if (post['postImageUrl'] != null && post['postImageUrl'].toString().isNotEmpty)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
@@ -247,11 +247,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                           height: 200,
                           width: double.infinity,
                           errorBuilder: (context, error, stackTrace) {
-                            return Text('Error loading image');
+                            return const Text('Error loading image');
                           },
                         ),
                       ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     // Text(
                     //   post['timestamp'] != null ? _formatTimestamp(post['timestamp']) : '',
                     //   style: TextStyle(color: Colors.grey),

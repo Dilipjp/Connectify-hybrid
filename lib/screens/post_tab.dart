@@ -5,10 +5,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import 'package:geocoding/geocoding.dart';
 import 'location_search.dart'; // Import the location search screen
 
 class PostTab extends StatefulWidget {
+  const PostTab({super.key});
+
   @override
   _PostTabState createState() => _PostTabState();
 }
@@ -38,7 +39,7 @@ class _PostTabState extends State<PostTab> {
   Future<void> _uploadPost() async {
     if (_selectedImage == null || _captionController.text.isEmpty || _locationName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an image, write a caption, and tag a location.')),
+        const SnackBar(content: Text('Please select an image, write a caption, and tag a location.')),
       );
       return;
     }
@@ -51,7 +52,7 @@ class _PostTabState extends State<PostTab> {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
         String userId = currentUser.uid;
-        String postId = Uuid().v4(); // Generate a unique postId
+        String postId = const Uuid().v4(); // Generate a unique postId
         String fileName = 'posts/$postId.jpg';
 
         // Upload image to Firebase Storage
@@ -74,7 +75,7 @@ class _PostTabState extends State<PostTab> {
 
         // Success
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Post uploaded successfully!123')),
+          const SnackBar(content: Text('Post uploaded successfully!123')),
         );
 
         // Clear fields
@@ -112,7 +113,7 @@ class _PostTabState extends State<PostTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Create Post',
           style: TextStyle(color: Colors.white), // Set text color to white
         ),
@@ -120,7 +121,7 @@ class _PostTabState extends State<PostTab> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -131,21 +132,21 @@ class _PostTabState extends State<PostTab> {
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _pickImage,
               child: Text(_selectedImage == null ? 'Pick Image' : 'Change Image'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _captionController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Write a caption...',
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Navigate to location search screen
@@ -156,24 +157,24 @@ class _PostTabState extends State<PostTab> {
                   ),
                 );
               },
-              child: Text('Tag Location'),
+              child: const Text('Tag Location'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (_locationName != null) // Display the location name (city) if available
               Text(
                 'Location: $_locationName',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
               onPressed: _uploadPost,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
               ),
-              child: Text('Upload Post', style: TextStyle(color: Colors.white)),
+              child: const Text('Upload Post', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
