@@ -280,7 +280,6 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             const SizedBox(height: 20),
-            //
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
