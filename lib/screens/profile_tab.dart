@@ -247,6 +247,19 @@ class _ProfileTabState extends State<ProfileTab> {
                       fontSize: 16,
                     ),
                   ),
+                  if (userRole == 'User' && warnings.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Warnings:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                 ],
               ),
             ),
