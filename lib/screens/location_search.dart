@@ -4,7 +4,7 @@ import 'package:geocoding/geocoding.dart';
 class LocationSearchScreen extends StatefulWidget {
   final Function(String, double, double) onSelectLocation;
 
-  LocationSearchScreen({required this.onSelectLocation});
+  const LocationSearchScreen({super.key, required this.onSelectLocation});
 
   @override
   _LocationSearchScreenState createState() => _LocationSearchScreenState();
@@ -51,7 +51,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Location'),
+        title: const Text('Search Location'),
         backgroundColor: Colors.black,
       ),
       body: Padding(
@@ -62,7 +62,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
             TextField(
               controller: _searchController,
               onChanged: _searchLocation,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Search Location',
                 border: OutlineInputBorder(),
                 filled: true,
@@ -73,11 +73,11 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             if (_isLoading)
-              Center(child: CircularProgressIndicator())
+              const Center(child: CircularProgressIndicator())
             else if (_noLocationFound)
-              Center(child: Text('No locations found.', style: TextStyle(color: Colors.red)))
+              const Center(child: Text('No locations found.', style: TextStyle(color: Colors.red)))
             else
               Expanded(
                 child: ListView.builder(
@@ -85,14 +85,14 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                   itemBuilder: (context, index) {
                     final place = _places[index];
                     return Card(
-                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
                       child: ListTile(
                         title: Text(
                           place.locality ?? 'Unknown',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(place.country ?? 'Unknown'),
-                        trailing: Icon(Icons.arrow_forward_ios, color: Colors.black),
+                        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black),
                         onTap: () async {
                           // Get coordinates of the selected place
                           List<Location> locations = await locationFromAddress(

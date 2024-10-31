@@ -5,6 +5,8 @@ import 'post_tab.dart';
 import 'profile_tab.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -12,11 +14,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomeTab(),
-    FollowersTab(),
-    PostTab(),
-    ProfileTab(),
+  static final List<Widget> _widgetOptions = <Widget>[
+    const HomeTab(),
+    const FollowersTab(),
+    const PostTab(),
+    const ProfileTab(),
   ];
 
   void _onItemTapped(int index) {
@@ -30,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

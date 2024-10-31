@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class FollowersTab extends StatefulWidget {
+  const FollowersTab({super.key});
+
   @override
   _UsersListScreenState createState() => _UsersListScreenState();
 }
@@ -21,7 +23,7 @@ class _UsersListScreenState extends State<FollowersTab> {
     _loadUsers();
   }
 
-  // Fetch all users except the current user
+  // Fetch all users with userRole = "User", except the current user
   Future<void> _loadUsers() async {
     try {
       DatabaseReference usersRef = _database.ref('users');
@@ -30,9 +32,14 @@ class _UsersListScreenState extends State<FollowersTab> {
       usersRef.onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           final usersMap = Map<String, dynamic>.from(event.snapshot.value as Map);
+
           setState(() {
-            // Remove the current user from the list
-            allUsers = usersMap..remove(currentUserId);
+            // Convert to list of entries, filter, and then convert back to Map
+            allUsers = Map.fromEntries(
+              usersMap.entries
+                  .where((entry) => entry.key != currentUserId && entry.value['userRole'] == 'User')
+                  .map((entry) => MapEntry(entry.key, Map<String, dynamic>.from(entry.value))),
+            );
 
             // After loading users, load follow status for each user
             _loadFollowStatus();
@@ -81,12 +88,12 @@ class _UsersListScreenState extends State<FollowersTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Users', style: TextStyle(color: Colors.white)),
+        title: const Text('Users', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         centerTitle: true,
       ),
       body: allUsers.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
         itemCount: allUsers.length,
         itemBuilder: (context, index) {
@@ -97,7 +104,7 @@ class _UsersListScreenState extends State<FollowersTab> {
             leading: CircleAvatar(
               backgroundImage: user['userProfileImage'] != null && user['userProfileImage'].toString().isNotEmpty
                   ? NetworkImage(user['userProfileImage'])
-                  : AssetImage('assets/profile_placeholder.png') as ImageProvider,
+                  : const AssetImage('assets/profile_placeholder.png') as ImageProvider,
             ),
             title: Text(user['userName'] ?? 'Unknown User'),
             subtitle: Text(user['userBio'] ?? ''),
@@ -109,12 +116,12 @@ class _UsersListScreenState extends State<FollowersTab> {
                   _followUser(userId); // Follow if not following
                 }
               },
-              child: Text(
-                currentUserFollowing[userId] == true ? 'Unfollow' : 'Follow',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: currentUserFollowing[userId] == true ? Colors.red : Colors.black,
+              ),
+              child: Text(
+                currentUserFollowing[userId] == true ? 'Unfollow' : 'Follow',
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           );
