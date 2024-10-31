@@ -166,6 +166,8 @@ class _ModeratorUserPostsScreenState extends State<ModeratorUserPostsScreen> {
       },
     );
   }
+
+  // Send or remove warning message
   void _sendOrRemoveWarning(String postId) {
     final DatabaseReference warningRef = _database.ref('users/${widget.userId}/userWarnings');
 
@@ -250,7 +252,88 @@ class _ModeratorUserPostsScreenState extends State<ModeratorUserPostsScreen> {
           },
         );
       }
+    });
+  }
+
+  // Delete a post
+  void _deletePost(String postId) {
+    DatabaseReference postRef = _database.ref('posts/$postId');
+    postRef.remove().then((_) {
+      setState(() {
+        userPosts.removeWhere((post) => post['postId'] == postId);
       });
-    }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post deleted successfully')),
+      );
+    }).catchError((error) {
+      print('Error deleting post: $error');
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Moderator User Posts', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      body: ListView.builder(
+        itemCount: userPosts.length,
+        itemBuilder: (context, index) {
+          Map<dynamic, dynamic> post = userPosts[index];
 
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(post['caption'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+                    Image.network(post['postImageUrl']),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _editPost(post['postId'], post['caption'], post['postImageUrl']),
+                          child: Text('Edit'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _sendOrRemoveWarning(post['postId']),
+                          child: FutureBuilder<DatabaseEvent>(
+                            future: _database.ref('users/${widget.userId}/userWarnings').orderByChild('postId').equalTo(post['postId']).once(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              } else if (snapshot.hasData && snapshot.data!.snapshot.children.isNotEmpty) {
+                                return Text('Remove Warning');
+                              } else {
+                                return Text('Send Warning');
+                              }
+                            },
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _deletePost(post['postId']),
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
