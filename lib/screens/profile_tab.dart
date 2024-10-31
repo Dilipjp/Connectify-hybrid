@@ -248,6 +248,36 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             ),
+        // All Posts button (only for Moderators)
+    if (userRole == 'Moderator')
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ModeratorUsersScreen()),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 15),
+          ),
+          child: Center(
+            child: Text(
+              'All Posts',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
             const SizedBox(height: 20),
             // All Posts button (only for Moderators)
             if (userRole == 'moderator')
