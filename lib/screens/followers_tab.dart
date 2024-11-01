@@ -21,7 +21,9 @@ class _UsersListScreenState extends State<FollowersTab> {
     _loadUsers();
   }
 
-  // Fetch all users except the current user
+
+
+  // Fetch all users with userRole = "User", except the current user
   Future<void> _loadUsers() async {
     try {
       DatabaseReference usersRef = _database.ref('users');
@@ -30,9 +32,14 @@ class _UsersListScreenState extends State<FollowersTab> {
       usersRef.onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           final usersMap = Map<String, dynamic>.from(event.snapshot.value as Map);
+
           setState(() {
-            // Remove the current user from the list
-            allUsers = usersMap..remove(currentUserId);
+            // Convert to list of entries, filter, and then convert back to Map
+            allUsers = Map.fromEntries(
+              usersMap.entries
+                  .where((entry) => entry.key != currentUserId && entry.value['userRole'] == 'User')
+                  .map((entry) => MapEntry(entry.key, Map<String, dynamic>.from(entry.value))),
+            );
 
             // After loading users, load follow status for each user
             _loadFollowStatus();
@@ -43,6 +50,8 @@ class _UsersListScreenState extends State<FollowersTab> {
       print('Error loading users: $e');
     }
   }
+
+
 
   // Check if the current user is following each user
   Future<void> _loadFollowStatus() async {
