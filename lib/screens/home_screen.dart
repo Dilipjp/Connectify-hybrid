@@ -5,6 +5,8 @@ import 'post_tab.dart';
 import 'profile_tab.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -12,11 +14,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomeTab(),
-    FollowersTab(),
-    PostTab(),
-    ProfileTab(),
+  static final List<Widget> _widgetOptions = <Widget>[
+    const HomeTab(),
+    const FollowersTab(),
+    const PostTab(),
+    const ProfileTab(),
   ];
 
   void _onItemTapped(int index) {
@@ -30,33 +32,33 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.black, // Background color per tab
+            backgroundColor: Colors.black, // Background color for Home tab
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.group),
             label: 'Followers',
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.black, // Background color for Followers tab
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
             label: 'Post',
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.black, // Background color for Post tab
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.black, // Background color for Profile tab
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white, // Color for the selected item
+        selectedItemColor: Colors.white, // Highlight color for selected item
         unselectedItemColor: Colors.grey[600], // Color for unselected items
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.shifting, // For different tab background colors
+        type: BottomNavigationBarType.shifting, // To allow different tab background colors
       ),
     );
   }

@@ -1,42 +1,46 @@
-
-import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'location_search.dart'; // Import the location search screen
+
 class PostTab extends StatefulWidget {
   const PostTab({super.key});
 
   @override
-  State<PostTab> createState() => _PostTabState();
+  _PostTabState createState() => _PostTabState();
 }
 
 class _PostTabState extends State<PostTab> {
-
-  final picker = ImagePicker();
-  File? _image;
-  final TextEditingController captionController = TextEditingController();
-  bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
+  final TextEditingController _captionController = TextEditingController();
 
-  Future<void> pickImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+  File? _selectedImage;
+  bool _isLoading = false;
+  String? _locationName; // Variable to store location name (city)
+  double? _latitude; // Variable to store latitude
+  double? _longitude; // Variable to store longitude
+
+  Future<void> _pickImage() async {
+    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        _selectedImage = File(pickedImage.path);
       });
     }
   }
 
-  Future<void> uploadPost() async {
-    if (_image == null) {
-      _showMessageDialog("Please select an image");
-      return;
-    }
-    if (captionController.text.isEmpty) {
-      _showMessageDialog("Caption is required");
+  Future<void> _uploadPost() async {
+    if (_selectedImage == null || _captionController.text.isEmpty || _locationName == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an image, write a caption, and tag a location.')),
+      );
       return;
     }
 
@@ -44,41 +48,137 @@ class _PostTabState extends State<PostTab> {
       _isLoading = true;
     });
 
-    String userId = _auth.currentUser?.uid ?? '';
-    String fileName = userId + "_" + DateTime.now().millisecondsSinceEpoch.toString();
-    Reference storageRef = FirebaseStorage.instance.ref().child('PostImages/$fileName.jpg');
-
     try {
-      UploadTask uploadTask = storageRef.putFile(_image!);
-      await uploadTask;
-      String downloadUrl = await storageRef.getDownloadURL();
+      User? currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        String userId = currentUser.uid;
+        String postId = const Uuid().v4(); // Generate a unique postId
+        String fileName = 'posts/$postId.jpg';
 
-      DatabaseReference postsRef = FirebaseDatabase.instance.reference().child('posts');
-      String postId = postsRef.push().key!;
-      await postsRef.child(postId).set({
-        'postId': postId,
-        'postImageUrl': downloadUrl,
-        'caption': captionController.text,
-        'userId': userId,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      });
+        // Upload image to Firebase Storage
+        UploadTask uploadTask = _storage.ref(fileName).putFile(_selectedImage!);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
+        // Save post data to Firebase Realtime Database
+        DatabaseReference postRef = _database.ref('posts/$postId');
+        await postRef.set({
+          'postId': postId,
+          'caption': _captionController.text,
+          'postImageUrl': downloadUrl,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          'userId': userId,
+          'locationName': _locationName, // Save city name
+          'latitude': _latitude, // Save latitude
+          'longitude': _longitude, // Save longitude
+        });
+
+        // Success
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post uploaded successfully!123')),
+        );
+
+        // Clear fields
+        _captionController.clear();
+        setState(() {
+          _selectedImage = null;
+          _locationName = null; // Clear location name
+          _latitude = null; // Clear latitude
+          _longitude = null; // Clear longitude
+        });
+
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (error) {
+      print('Error uploading post: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading post: $error')),
+      );
+    } finally {
       setState(() {
-        _image = null;
-        captionController.clear();
         _isLoading = false;
       });
-      _showMessageDialog("Post uploaded successfully!");
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      _showMessageDialog("Failed to upload post: $e");
     }
   }
+
+  void _selectLocation(String locationName, double latitude, double longitude) {
+    setState(() {
+      _locationName = locationName;
+      _latitude = latitude;
+      _longitude = longitude;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Create Post',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_selectedImage != null)
+              Image.file(
+                _selectedImage!,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _pickImage,
+              child: Text(_selectedImage == null ? 'Pick Image' : 'Change Image'),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _captionController,
+              decoration: const InputDecoration(
+                labelText: 'Write a caption...',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to location search screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LocationSearchScreen(onSelectLocation: _selectLocation),
+                  ),
+                );
+              },
+              child: const Text('Tag Location'),
+            ),
+            const SizedBox(height: 20),
+            if (_locationName != null) // Display the location name (city) if available
+              Text(
+                'Location: $_locationName',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            const SizedBox(height: 20),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ElevatedButton(
+              onPressed: _uploadPost,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+              child: const Text('Upload Post', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
-
