@@ -162,3 +162,90 @@ class _AdminUserPostsScreenState extends State<AdminUserPostsScreen> {
       },
     );
   }
+  void _sendOrRemoveWarning(String postId) {
+    final DatabaseReference warningRef = _database.ref('users/${widget.userId}/userWarnings');
+
+    // Check if a warning already exists for the post
+    warningRef.orderByChild('postId').equalTo(postId).once().then((DatabaseEvent snapshot) {
+      if (snapshot.snapshot.children.isNotEmpty) { // Check if any warnings exist
+        // Warning exists, show dialog to remove it
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Remove Warning'),
+              content: Text('Are you sure you want to remove the warning for this post?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Remove warning
+                    for (var child in snapshot.snapshot.children) {
+                      child.ref.remove();
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Warning removed successfully')),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Remove Warning'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // No warning exists, show dialog to send a new one
+        TextEditingController warningController = TextEditingController(text: "Please review the content of this post.");
+
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Send Warning'),
+              content: TextField(
+                controller: warningController,
+                decoration: InputDecoration(labelText: 'Warning Message'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Get the current timestamp
+                    int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+                    // Save warning message to userWarnings
+                    DatabaseReference userWarningsRef = warningRef.push();
+                    userWarningsRef.set({
+                      'message': warningController.text,
+                      'postId': postId,
+                      'timestamp': timestamp,
+                    }).then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Warning sent successfully')),
+                      );
+                      Navigator.of(context).pop();
+                    }).catchError((error) {
+                      print('Error sending warning: $error');
+                    });
+                  },
+                  child: Text('Send'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+  }
+
