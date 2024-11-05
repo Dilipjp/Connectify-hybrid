@@ -50,9 +50,10 @@ class _FollowingsScreenState extends State<FollowingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Followers'),
+        title: Text('Followers', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: followersList.isEmpty
           ? Center(child: CircularProgressIndicator())
