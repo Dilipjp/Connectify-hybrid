@@ -57,3 +57,31 @@ class _AdminUserPostsScreenState extends State<AdminUserPostsScreen> {
       print('Error loading posts: $error');
     });
   }
+  Future<File?> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      return File(pickedImage.path);
+    }
+    return null;
+  }
+
+  // Upload the image to Firebase Storage and return the download URL
+  Future<String?> _uploadImage(File image, String postId) async {
+    _showLoadingSpinner(context);
+
+    try {
+      String filePath = 'posts/$postId/${DateTime.now().millisecondsSinceEpoch}.png';
+      Reference storageRef = _storage.ref().child(filePath);
+      UploadTask uploadTask = storageRef.putFile(image);
+      TaskSnapshot snapshot = await uploadTask;
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    } finally {
+      _hideLoadingSpinner(context);
+    }
+  }
