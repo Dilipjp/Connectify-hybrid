@@ -78,3 +78,51 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
       },
     );
   }
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+        title: Text('Moderator Users'),
+    backgroundColor: Colors.black,
+    ),
+    body: userList.isEmpty
+    ? Center(child: CircularProgressIndicator())
+        : ListView.builder(
+    itemCount: userList.length,
+    itemBuilder: (context, index) {
+    final user = userList[index];
+    return Card(
+    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Row(
+    children: [
+    CircleAvatar(
+    backgroundImage: NetworkImage(
+    user['userProfileImage'] ?? 'assets/profile_placeholder.png'),
+    ),
+    SizedBox(width: 10),
+    Expanded(
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Text(
+    user['userName'] ?? 'Unknown User',
+    style: TextStyle(fontWeight: FontWeight.bold),
+    ),
+    Text('Status: ${user['userStatus'] ?? 'Unknown'}'),
+    ],
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: 10), // Space between user info and buttons
+    Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+    ElevatedButton(
+    onPressed: () {
+    _toggleUserStatus(user['userId'], user['userStatus']);
+    },
