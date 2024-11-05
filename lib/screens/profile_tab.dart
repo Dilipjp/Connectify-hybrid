@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'edit_profile_screen.dart';
 import 'user_posts_screen.dart';
-import 'moderator/moderator_users_screen.dart';
-import 'admin/admin_users_screen.dart';
+import 'moderator/ModeratorUsersScreen.dart';
+import 'admin/AdminUsersScreen.dart';
 import 'reports_screen.dart';
 
 class ProfileTab extends StatefulWidget {

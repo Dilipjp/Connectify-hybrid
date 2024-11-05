@@ -20,6 +20,56 @@ class _ReportsScreenState extends State<ReportsScreen> {
     _fetchReports();
   }
 
+  // Future<void> _fetchReports() async {
+  //   _reportsRef.onValue.listen((event) async {
+  //     if (event.snapshot.value != null) {
+  //       Map<dynamic, dynamic> reports = event.snapshot.value as Map<dynamic, dynamic>;
+  //
+  //       List<Map<dynamic, dynamic>> loadedReports = [];
+  //       for (var reportKey in reports.keys) {
+  //         final reportData = reports[reportKey];
+  //         final postId = reportData['postId'];
+  //         final reporterId = reportData['userId'];
+  //         final reason = reportData['reason'];
+  //         final timestamp = reportData['timestamp'];
+  //
+  //         // Fetch post details (caption, uploaderId, and postImageUrl)
+  //         final postSnapshot = await _postsRef.child(postId).get();
+  //         final postDetails = postSnapshot.value as Map<dynamic, dynamic>;
+  //         final caption = postDetails['caption'];
+  //         final uploaderId = postDetails['userId'];
+  //         final postImageUrl = postDetails['postImageUrl'];
+  //
+  //         // Fetch uploader's name
+  //         final uploaderSnapshot = await _usersRef.child(uploaderId).get();
+  //         final uploaderName = uploaderSnapshot.child('userName').value as String;
+  //
+  //         // Fetch reporter's name
+  //         final reporterSnapshot = await _usersRef.child(reporterId).get();
+  //         final reporterName = reporterSnapshot.child('userName').value as String;
+  //
+  //         // Add the complete report details to the list
+  //         loadedReports.add({
+  //           'postId': postId,
+  //           'caption': caption,
+  //           'reason': reason,
+  //           'timestamp': timestamp,
+  //           'uploaderName': uploaderName,
+  //           'reporterName': reporterName,
+  //           'postImageUrl': postImageUrl,
+  //         });
+  //       }
+  //
+  //       setState(() {
+  //         reportsList = loadedReports;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         reportsList = [];
+  //       });
+  //     }
+  //   });
+  // }
   Future<void> _fetchReports() async {
     _reportsRef.onValue.listen((event) async {
       if (event.snapshot.value != null) {
@@ -35,6 +85,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
           // Fetch post details (caption, uploaderId, and postImageUrl)
           final postSnapshot = await _postsRef.child(postId).get();
+          if (!postSnapshot.exists) continue;
+
           final postDetails = postSnapshot.value as Map<dynamic, dynamic>;
           final caption = postDetails['caption'];
           final uploaderId = postDetails['userId'];
@@ -42,11 +94,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
           // Fetch uploader's name
           final uploaderSnapshot = await _usersRef.child(uploaderId).get();
-          final uploaderName = uploaderSnapshot.child('userName').value as String;
+          final uploaderName = uploaderSnapshot.child('userName').value as String? ?? 'Unknown';
 
           // Fetch reporter's name
           final reporterSnapshot = await _usersRef.child(reporterId).get();
-          final reporterName = reporterSnapshot.child('userName').value as String;
+          final reporterName = reporterSnapshot.child('userName').value as String? ?? 'Unknown';
 
           // Add the complete report details to the list
           loadedReports.add({
@@ -59,6 +111,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
             'postImageUrl': postImageUrl,
           });
         }
+
+        // Sort by timestamp in descending order
+        loadedReports.sort((a, b) => (b['timestamp'] as int).compareTo(a['timestamp'] as int));
 
         setState(() {
           reportsList = loadedReports;
