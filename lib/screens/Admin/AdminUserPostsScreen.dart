@@ -249,3 +249,18 @@ class _AdminUserPostsScreenState extends State<AdminUserPostsScreen> {
     });
   }
 
+  void _deletePost(String postId) {
+    DatabaseReference postRef = _database.ref('posts/$postId');
+    postRef.remove().then((_) {
+      setState(() {
+        userPosts.removeWhere((post) => post['postId'] == postId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post deleted successfully')),
+      );
+    }).catchError((error) {
+      print('Error deleting post: $error');
+    });
+  }
+
+  
