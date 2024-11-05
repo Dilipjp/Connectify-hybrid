@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'Admin/AdminUsersScreen.dart';
 import 'edit_profile_screen.dart';
-import 'moderator/ModeratorUsersScreen.dart';
 import 'user_posts_screen.dart';
-import 'all_posts_screen.dart';
+import 'moderator/moderator_users_screen.dart';
+import 'admin/admin_users_screen.dart';
+import 'reports_screen.dart';
+
 class ProfileTab extends StatefulWidget {
   @override
   _ProfileTabState createState() => _ProfileTabState();
@@ -326,7 +327,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             if (userRole == 'Moderator')
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -347,6 +348,36 @@ class _ProfileTabState extends State<ProfileTab> {
                   child: Center(
                     child: Text(
                       'All Users',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 20),
+            if (userRole == 'Moderator')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReportsScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Reports',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -387,6 +418,37 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             SizedBox(height: 20),
+            if (userRole == 'Admin')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReportsScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Reports',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 20),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
