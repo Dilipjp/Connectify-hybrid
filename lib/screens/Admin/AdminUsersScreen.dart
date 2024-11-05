@@ -1,3 +1,9 @@
+
+
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class AdminUsersScreen extends StatefulWidget {
   @override
   _AdminUsersScreenState createState() => _AdminUsersScreenState();
@@ -126,3 +132,43 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
     onPressed: () {
     _toggleUserStatus(user['userId'], user['userStatus']);
     },
+      child: Text(
+        user['userStatus'] == 'active' ? 'Deactivate' : 'Activate',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+      SizedBox(width: 8), // Add space between buttons
+      ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AdminUserPostsScreen(userId: user['userId']),
+            ),
+          );
+        },
+        child: Text('Posts', style: TextStyle(color: Colors.white)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    ],
+    ),
+    ],
+    ),
+    ),
+    );
+    },
+    ),
+    );
+  }
+}
