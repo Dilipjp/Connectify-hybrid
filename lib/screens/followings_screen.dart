@@ -19,3 +19,28 @@ class _FollowingsScreenState extends State<FollowingsScreen> {
     super.initState();
     _fetchFollowers();
   }
+  Future<void> _fetchFollowers() async {
+    final followersRef = FirebaseDatabase.instance.ref('users/${widget.userId}/followers');
+    final followersSnapshot = await followersRef.get();
+
+    if (followersSnapshot.exists) {
+      final followersMap = followersSnapshot.value as Map<dynamic, dynamic>;
+
+      List<Map<String, dynamic>> loadedFollowers = [];
+      for (var followerId in followersMap.keys) {
+        final userSnapshot = await _usersRef.child(followerId).get();
+        if (userSnapshot.exists) {
+          final userData = userSnapshot.value as Map<dynamic, dynamic>;
+          loadedFollowers.add({
+            'userId': followerId,
+            'userName': userData['userName'],
+            'userProfileImage': userData['userProfileImage'],
+          });
+        }
+      }
+
+      setState(() {
+        followersList = loadedFollowers;
+      });
+    }
+  }
