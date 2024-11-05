@@ -17,12 +17,10 @@ void main() async {
     print("Firebase Initialization Error: $e");
   }
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,19 +28,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.purple),
       initialRoute: '/',
       routes: {
-        '/': (context) => const AuthWrapper(), // Use AuthWrapper for authentication flow
-        '/sign-in': (context) => const SignInScreen(),
-        '/sign-up': (context) => const SignUpScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/forgot-password': (context) => const ForgotPasswordScreen(),
+        '/': (context) => AuthWrapper(), // Use AuthWrapper for authentication flow
+        '/sign-in': (context) => SignInScreen(),
+        '/sign-up': (context) => SignUpScreen(),
+        '/home': (context) => HomeScreen(),
+        '/forgot-password': (context) => ForgotPasswordScreen(),
       },
     );
   }
 }
 
 class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -52,11 +48,11 @@ class AuthWrapper extends StatelessWidget {
         print("Auth state changed: ${snapshot.connectionState}, user: ${snapshot.data}");
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SplashScreen(); // Show splash screen while loading
+          return SplashScreen(); // Show splash screen while loading
         } else if (snapshot.hasData) {
-          return const HomeScreen(); // User is signed in
+          return HomeScreen(); // User is signed in
         } else {
-          return const SignInScreen(); // User is not signed in
+          return SignInScreen(); // User is not signed in
         }
       },
     );

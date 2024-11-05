@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'Admin/AdminUsersScreen.dart';
 import 'edit_profile_screen.dart';
+import 'moderator/ModeratorUsersScreen.dart';
 import 'user_posts_screen.dart';
 import 'moderator/ModeratorUsersScreen.dart';
-import 'admin/AdminUsersScreen.dart';
+import 'Admin/AdminUsersScreen.dart';
 import 'reports_screen.dart';
+import 'followings_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -292,7 +295,19 @@ class _ProfileTabState extends State<ProfileTab> {
                   },
                   child: _buildStatColumn('Posts', postCount.toString()),
                 ),
-                _buildStatColumn('Followers', followersCount.toString()),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingsScreen(userId: userId!),
+                      ),
+                    );
+                  },
+                  child: _buildStatColumn('Followers', followersCount.toString()),
+                ),
+
+                // _buildStatColumn('Followers', followersCount.toString()),
                 _buildStatColumn('Following', followingCount.toString()),
               ],
             ),
