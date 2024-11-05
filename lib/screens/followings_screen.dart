@@ -19,6 +19,7 @@ class _FollowingsScreenState extends State<FollowingsScreen> {
     super.initState();
     _fetchFollowers();
   }
+
   Future<void> _fetchFollowers() async {
     final followersRef = FirebaseDatabase.instance.ref('users/${widget.userId}/followers');
     final followersSnapshot = await followersRef.get();
@@ -44,3 +45,32 @@ class _FollowingsScreenState extends State<FollowingsScreen> {
       });
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Followers'),
+        backgroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: followersList.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+        itemCount: followersList.length,
+        itemBuilder: (context, index) {
+          final follower = followersList[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(follower['userProfileImage'] ?? 'https://via.placeholder.com/150'),
+            ),
+            title: Text(follower['userName']),
+            onTap: () {
+              // Handle tap (e.g., navigate to the user's profile)
+            },
+          );
+        },
+      ),
+    );
+  }
+}
