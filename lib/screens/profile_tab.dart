@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'Admin/AdminUsersScreen.dart';
 import 'edit_profile_screen.dart';
 import 'moderator/ModeratorUsersScreen.dart';
 import 'user_posts_screen.dart';
 import 'all_posts_screen.dart';
-
 class ProfileTab extends StatefulWidget {
-  const ProfileTab({super.key});
-
   @override
   _ProfileTabState createState() => _ProfileTabState();
 }
@@ -35,9 +33,11 @@ class _ProfileTabState extends State<ProfileTab> {
     _loadUserPostsCount();
     _loadFollowingCount();
     _loadFollowersCount();
+    // if (userRole == 'User') {
+    _loadWarnings(); // Load warnings only for Users
+    // }
   }
 
-  // Real-time listener for user data changes
   void _loadUserData() async {
     User? currentUser = _auth.currentUser;
 
@@ -45,7 +45,6 @@ class _ProfileTabState extends State<ProfileTab> {
       userId = currentUser.uid;
       DatabaseReference userRef = _database.ref('users/$userId');
 
-      // Set a real-time listener using onValue
       userRef.onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> userData = event.snapshot.value as Map;
@@ -64,7 +63,6 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
-  // Fetch and count user's posts
   void _loadUserPostsCount() async {
     User? currentUser = _auth.currentUser;
 
@@ -72,16 +70,15 @@ class _ProfileTabState extends State<ProfileTab> {
       String userId = currentUser.uid;
       DatabaseReference postsRef = _database.ref('posts');
 
-      // Query to get posts for the current user
       postsRef.orderByChild('userId').equalTo(userId).onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> posts = event.snapshot.value as Map;
           setState(() {
-            postCount = posts.length; // Set the count of the user's posts
+            postCount = posts.length;
           });
         } else {
           setState(() {
-            postCount = 0; // No posts found, set count to 0
+            postCount = 0;
           });
         }
       }, onError: (error) {
@@ -90,7 +87,6 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
-  // Fetch and count user's following count
   void _loadFollowingCount() async {
     User? currentUser = _auth.currentUser;
 
@@ -104,7 +100,6 @@ class _ProfileTabState extends State<ProfileTab> {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> usersData = event.snapshot.value as Map;
 
-          // Iterate over all users to check if the current user is a follower
           usersData.forEach((userId, userData) {
             if (userData['followers'] != null && userData['followers'].containsKey(currentUserId)) {
               followingCount++;
@@ -112,7 +107,6 @@ class _ProfileTabState extends State<ProfileTab> {
           });
 
           setState(() {
-            // Update the state with the count of users the current user is following
             this.followingCount = followingCount;
           });
         } else {
@@ -125,6 +119,7 @@ class _ProfileTabState extends State<ProfileTab> {
       });
     }
   }
+
   void _loadFollowersCount() async {
     User? currentUser = _auth.currentUser;
 
@@ -136,12 +131,11 @@ class _ProfileTabState extends State<ProfileTab> {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> followersData = event.snapshot.value as Map;
           setState(() {
-            // Update the state with the count of followers
-            followersCount = followersData.length;
+            this.followersCount = followersData.length;
           });
         } else {
           setState(() {
-            followersCount = 0;
+            this.followersCount = 0;
           });
         }
       }, onError: (error) {
@@ -149,7 +143,6 @@ class _ProfileTabState extends State<ProfileTab> {
       });
     }
   }
-
   // load warnings;
   void _loadWarnings() async {
     if (userId != null) {
@@ -207,7 +200,7 @@ class _ProfileTabState extends State<ProfileTab> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Profile',
           style: TextStyle(color: Colors.white),
         ),
@@ -219,32 +212,33 @@ class _ProfileTabState extends State<ProfileTab> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: EdgeInsets.symmetric(vertical: 20),
               child: Column(
                 children: [
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: userProfileImage != null
                         ? NetworkImage(userProfileImage!)
-                        : const AssetImage('assets/profile_placeholder.png') as ImageProvider,
+                        : AssetImage('assets/profile_placeholder.png') as ImageProvider,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Text(
                     userName ?? 'Loading...',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  SizedBox(height: 5),
                   Text(
                     userBio ?? '@loading_bio',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
                     ),
                   ),
+                  // Warnings Section
                   if (userRole == 'User' && warnings.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
@@ -282,13 +276,12 @@ class _ProfileTabState extends State<ProfileTab> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 GestureDetector(
                   onTap: () {
-                    // Navigate to UserPostsScreen
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -302,7 +295,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 _buildStatColumn('Following', followingCount.toString()),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
@@ -310,8 +303,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const EditProfileScreen())).then((_) {
-                    // Trigger data reload after returning from EditProfileScreen
+                          builder: (context) => EditProfileScreen())).then((_) {
                     _loadUserData();
                   });
                 },
@@ -320,9 +312,9 @@ class _ProfileTabState extends State<ProfileTab> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 15),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'Edit Profile',
                     style: TextStyle(
@@ -334,46 +326,15 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             ),
-        // All Posts button (only for Moderators)
-    if (userRole == 'Moderator')
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ModeratorUsersScreen()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 15),
-          ),
-          child: Center(
-            child: Text(
-              'All Posts',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ),
-            const SizedBox(height: 20),
-            // All Posts button (only for Moderators)
-            if (userRole == 'moderator')
+            SizedBox(height: 10),
+            if (userRole == 'Moderator')
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const AllPostsScreen()),
+                      MaterialPageRoute(builder: (context) => ModeratorUsersScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -381,11 +342,11 @@ class _ProfileTabState extends State<ProfileTab> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: EdgeInsets.symmetric(vertical: 15),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'All Posts',
+                      'All Users',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -395,7 +356,37 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                 ),
               ),
-            const SizedBox(height: 20),
+            SizedBox(height: 10),
+            if (userRole == 'Admin')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AdminUsersScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Users',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
@@ -414,9 +405,9 @@ class _ProfileTabState extends State<ProfileTab> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 15),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'Log Out',
                     style: TextStyle(
@@ -428,29 +419,30 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatColumn(String label, String count) {
+  Column _buildStatColumn(String label, String count) {
     return Column(
       children: [
         Text(
           count,
-          style: const TextStyle(
-            fontSize: 22,
+          style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
-            color: Colors.grey,
+            color: Colors.black,
           ),
         ),
       ],
