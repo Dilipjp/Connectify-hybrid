@@ -327,22 +327,19 @@ class _HomeTabState extends State<HomeTab> {
     DataSnapshot snapshot = event.snapshot;
 
     if (snapshot.exists) {
-      // Get the current likes map and like count
       Map<dynamic, dynamic> post = snapshot.value as Map<dynamic, dynamic>;
       int currentLikeCount = post['likeCount'] ?? 0;
       Map<dynamic, dynamic> likes = post['likes'] ?? {};
 
       if (likes.containsKey(userId)) {
-        // User already liked, remove like
         likes.remove(userId);
-        currentLikeCount -= 1; // Decrease like count
+        currentLikeCount -= 1;
       } else {
-        // User has not liked, add like
         likes[userId] = true;
-        currentLikeCount += 1; // Increase like count
+        currentLikeCount += 1;
       }
 
-      // Update the post data
+
       await postRef.update({
         'likeCount': currentLikeCount,
         'likes': likes,
