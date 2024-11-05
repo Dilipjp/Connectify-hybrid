@@ -85,3 +85,80 @@ class _AdminUserPostsScreenState extends State<AdminUserPostsScreen> {
       _hideLoadingSpinner(context);
     }
   }
+  // Edit post (caption and postImageUrl)
+  void _editPost(String postId, String currentCaption, String currentImageUrl) async {
+    TextEditingController captionController = TextEditingController(text: currentCaption);
+    File? newImageFile;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Post'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: captionController,
+                decoration: InputDecoration(labelText: 'Caption'),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  newImageFile = await _pickImage(); // Pick new image
+                  if (newImageFile != null) {
+                    captionController.text = 'Image selected. Will be uploaded.'; // Show placeholder text
+                  }
+                },
+                child: Text('Pick New Image'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String? newImageUrl;
+
+                // If a new image was selected, upload it to Firebase Storage
+                if (newImageFile != null) {
+                  newImageUrl = await _uploadImage(newImageFile!, postId);
+                }
+
+                // Update Firebase Realtime Database with the new caption and (optional) image URL
+                DatabaseReference postRef = _database.ref('posts/$postId');
+                postRef.update({
+                  'caption': captionController.text,
+                  'postImageUrl': newImageUrl ?? currentImageUrl, // Update URL only if a new one was uploaded
+                }).then((_) {
+                  setState(() {
+                    for (var post in userPosts) {
+                      if (post['postId'] == postId) {
+                        post['caption'] = captionController.text;
+                        if (newImageUrl != null) {
+                          post['postImageUrl'] = newImageUrl;
+                        }
+                      }
+                    }
+                  });
+                  Navigator.of(context).pop();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Post updated successfully')),
+                  );
+                }).catchError((error) {
+                  print('Error updating post: $error');
+                });
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
