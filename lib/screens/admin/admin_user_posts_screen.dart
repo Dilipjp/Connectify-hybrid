@@ -4,16 +4,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class ModeratorUserPostsScreen extends StatefulWidget {
+class AdminUserPostsScreen extends StatefulWidget {
   final String userId;
 
-  ModeratorUserPostsScreen({required this.userId});
+  AdminUserPostsScreen({required this.userId});
 
   @override
-  _ModeratorUserPostsScreenState createState() => _ModeratorUserPostsScreenState();
+  _AdminUserPostsScreenState createState() => _AdminUserPostsScreenState();
 }
 
-class _ModeratorUserPostsScreenState extends State<ModeratorUserPostsScreen> {
+class _AdminUserPostsScreenState extends State<AdminUserPostsScreen> {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   List<Map<dynamic, dynamic>> userPosts = [];

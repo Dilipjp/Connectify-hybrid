@@ -23,6 +23,7 @@ class _UsersListScreenState extends State<FollowersTab> {
     _loadUsers();
   }
 
+
   // Fetch all users with userRole = "User", except the current user
   Future<void> _loadUsers() async {
     try {
@@ -50,6 +51,8 @@ class _UsersListScreenState extends State<FollowersTab> {
       print('Error loading users: $e');
     }
   }
+
+
 
   // Check if the current user is following each user
   Future<void> _loadFollowStatus() async {
