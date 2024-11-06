@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'Admin/AdminUsersScreen.dart';
 import 'edit_profile_screen.dart';
+import 'moderator/ModeratorUsersScreen.dart';
 import 'user_posts_screen.dart';
-import 'all_posts_screen.dart';
+import 'moderator/moderator_users_screen.dart';
+import 'admin/admin_users_screen.dart';
+
+import 'reports_screen.dart';
+import 'followings_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -23,6 +29,7 @@ class _ProfileTabState extends State<ProfileTab> {
   int postCount = 0;
   int followingCount = 0;
   int followersCount = 0;
+  List<Map<String, dynamic>> warnings = [];
 
   @override
   void initState() {
@@ -31,9 +38,12 @@ class _ProfileTabState extends State<ProfileTab> {
     _loadUserPostsCount();
     _loadFollowingCount();
     _loadFollowersCount();
+    // if (userRole == 'User') {
+      _loadWarnings(); // Load warnings only for Users
+
+    // }
   }
 
-  // Real-time listener for user data changes
   void _loadUserData() async {
     User? currentUser = _auth.currentUser;
 
@@ -41,7 +51,6 @@ class _ProfileTabState extends State<ProfileTab> {
       userId = currentUser.uid;
       DatabaseReference userRef = _database.ref('users/$userId');
 
-      // Set a real-time listener using onValue
       userRef.onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> userData = event.snapshot.value as Map;
@@ -60,7 +69,6 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
-  // Fetch and count user's posts
   void _loadUserPostsCount() async {
     User? currentUser = _auth.currentUser;
 
@@ -68,16 +76,15 @@ class _ProfileTabState extends State<ProfileTab> {
       String userId = currentUser.uid;
       DatabaseReference postsRef = _database.ref('posts');
 
-      // Query to get posts for the current user
       postsRef.orderByChild('userId').equalTo(userId).onValue.listen((DatabaseEvent event) {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> posts = event.snapshot.value as Map;
           setState(() {
-            postCount = posts.length; // Set the count of the user's posts
+            postCount = posts.length;
           });
         } else {
           setState(() {
-            postCount = 0; // No posts found, set count to 0
+            postCount = 0;
           });
         }
       }, onError: (error) {
@@ -86,7 +93,6 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
-  // Fetch and count user's following count
   void _loadFollowingCount() async {
     User? currentUser = _auth.currentUser;
 
@@ -100,7 +106,6 @@ class _ProfileTabState extends State<ProfileTab> {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> usersData = event.snapshot.value as Map;
 
-          // Iterate over all users to check if the current user is a follower
           usersData.forEach((userId, userData) {
             if (userData['followers'] != null && userData['followers'].containsKey(currentUserId)) {
               followingCount++;
@@ -108,7 +113,6 @@ class _ProfileTabState extends State<ProfileTab> {
           });
 
           setState(() {
-            // Update the state with the count of users the current user is following
             this.followingCount = followingCount;
           });
         } else {
@@ -121,6 +125,7 @@ class _ProfileTabState extends State<ProfileTab> {
       });
     }
   }
+
   void _loadFollowersCount() async {
     User? currentUser = _auth.currentUser;
 
@@ -132,7 +137,6 @@ class _ProfileTabState extends State<ProfileTab> {
         if (event.snapshot.exists) {
           Map<dynamic, dynamic> followersData = event.snapshot.value as Map;
           setState(() {
-            // Update the state with the count of followers
             this.followersCount = followersData.length;
           });
         } else {
@@ -145,8 +149,57 @@ class _ProfileTabState extends State<ProfileTab> {
       });
     }
   }
+  // load warnings;
+  void _loadWarnings() async {
+    if (userId != null) {
+      DatabaseReference warningsRef = _database.ref('users/$userId/userWarnings');
 
+      warningsRef.onValue.listen((DatabaseEvent event) async {
+        if (event.snapshot.exists) {
+          Map<dynamic, dynamic> warningsData = event.snapshot.value as Map;
+          List<Map<String, dynamic>> loadedWarnings = [];
 
+          for (var warningKey in warningsData.keys) {
+            var warning = warningsData[warningKey];
+            String postId = warning['postId'];
+            String message = warning['message'];
+
+            // Fetch caption from posts node
+            DatabaseReference postRef = _database.ref('posts/$postId');
+            DataSnapshot postSnapshot = await postRef.get();
+
+            if (postSnapshot.exists) {
+              String caption = postSnapshot.child('caption').value as String;
+              loadedWarnings.add({
+                'message': message,
+                'caption': caption,
+                'postId': postId,
+              });
+            } else {
+              loadedWarnings.add({
+                'message': message,
+                'caption': 'Caption not found', // Fallback in case the post is missing
+                'postId': postId,
+              });
+            }
+          }
+
+          setState(() {
+            warnings = loadedWarnings;
+          });
+
+          print("Warnings with captions loaded: $warnings");
+        } else {
+          setState(() {
+            warnings = [];
+          });
+          print("No warnings found for the user.");
+        }
+      }, onError: (error) {
+        print('Error loading warnings: $error');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +244,41 @@ class _ProfileTabState extends State<ProfileTab> {
                       fontSize: 16,
                     ),
                   ),
+                  // Warnings Section
+                  if (userRole == 'User' && warnings.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Warnings:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: warnings.length,
+                            itemBuilder: (context, index) {
+                              final warning = warnings[index] as Map<String, dynamic>; // Cast to Map<String, dynamic>
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                child: Text(
+                                  "- ${warning['message']} (Caption: ${warning['caption']})",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -200,7 +288,6 @@ class _ProfileTabState extends State<ProfileTab> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    // Navigate to UserPostsScreen
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -210,7 +297,19 @@ class _ProfileTabState extends State<ProfileTab> {
                   },
                   child: _buildStatColumn('Posts', postCount.toString()),
                 ),
-                _buildStatColumn('Followers', followersCount.toString()),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingsScreen(userId: userId!),
+                      ),
+                    );
+                  },
+                  child: _buildStatColumn('Followers', followersCount.toString()),
+                ),
+
+                // _buildStatColumn('Followers', followersCount.toString()),
                 _buildStatColumn('Following', followingCount.toString()),
               ],
             ),
@@ -223,7 +322,6 @@ class _ProfileTabState extends State<ProfileTab> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => EditProfileScreen())).then((_) {
-                    // Trigger data reload after returning from EditProfileScreen
                     _loadUserData();
                   });
                 },
@@ -247,15 +345,17 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             SizedBox(height: 20),
-            // All Posts button (only for Moderators)
-            if (userRole == 'moderator')
+            if (userRole == 'Moderator')
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AllPostsScreen()),
+
+                      MaterialPageRoute(builder: (context) => ModeratorUsersScreen()),
+
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -267,7 +367,9 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                   child: Center(
                     child: Text(
-                      'All Posts',
+
+                      'All Users',
+
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -278,7 +380,98 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             SizedBox(height: 20),
-            //
+            if (userRole == 'Moderator')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReportsScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Reports',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 10),
+            if (userRole == 'Admin')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AdminUsersScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Users',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 20),
+            if (userRole == 'Admin')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReportsScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Reports',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 20),
+
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
@@ -311,29 +504,31 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
-          ],
+            SizedBox(height: 20),
+            ],
+
         ),
       ),
     );
   }
 
-  Widget _buildStatColumn(String label, String count) {
+  Column _buildStatColumn(String label, String count) {
     return Column(
       children: [
         Text(
           count,
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-        SizedBox(height: 5),
+        SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey,
+            color: Colors.black,
           ),
         ),
       ],
