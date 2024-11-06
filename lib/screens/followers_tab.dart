@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class FollowersTab extends StatefulWidget {
+  const FollowersTab({super.key});
+
   @override
   _UsersListScreenState createState() => _UsersListScreenState();
 }
@@ -20,7 +22,6 @@ class _UsersListScreenState extends State<FollowersTab> {
     currentUserId = _auth.currentUser?.uid;
     _loadUsers();
   }
-
 
 
   // Fetch all users with userRole = "User", except the current user
@@ -90,12 +91,12 @@ class _UsersListScreenState extends State<FollowersTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Users', style: TextStyle(color: Colors.white)),
+        title: const Text('Users', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         centerTitle: true,
       ),
       body: allUsers.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
         itemCount: allUsers.length,
         itemBuilder: (context, index) {
@@ -106,7 +107,7 @@ class _UsersListScreenState extends State<FollowersTab> {
             leading: CircleAvatar(
               backgroundImage: user['userProfileImage'] != null && user['userProfileImage'].toString().isNotEmpty
                   ? NetworkImage(user['userProfileImage'])
-                  : AssetImage('assets/profile_placeholder.png') as ImageProvider,
+                  : const AssetImage('assets/profile_placeholder.png') as ImageProvider,
             ),
             title: Text(user['userName'] ?? 'Unknown User'),
             subtitle: Text(user['userBio'] ?? ''),
@@ -118,12 +119,12 @@ class _UsersListScreenState extends State<FollowersTab> {
                   _followUser(userId); // Follow if not following
                 }
               },
-              child: Text(
-                currentUserFollowing[userId] == true ? 'Unfollow' : 'Follow',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: currentUserFollowing[userId] == true ? Colors.red : Colors.black,
+              ),
+              child: Text(
+                currentUserFollowing[userId] == true ? 'Unfollow' : 'Follow',
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           );

@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 
 class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
+
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
@@ -102,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             });
             _hideLoadingSpinner(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Profile updated successfully')),
+              const SnackBar(content: Text('Profile updated successfully')),
             );
           } catch (e) {
             _hideLoadingSpinner(context);
@@ -113,7 +115,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         } else {
           _hideLoadingSpinner(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Profile updated without image')),
+            const SnackBar(content: Text('Profile updated without image')),
           );
         }
       }
@@ -124,7 +126,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Center(
+      builder: (context) => const Center(
         child: CircularProgressIndicator(),
       ),
     );
@@ -138,9 +140,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile', style: TextStyle(color: Colors.white)),
+        title: const Text('Edit Profile', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -154,9 +156,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ? FileImage(_profileImage!)
                     : (userProfileImageUrl != null
                     ? NetworkImage(userProfileImageUrl!)
-                    : AssetImage('assets/images/default_avatar.png'))
+                    : const AssetImage('assets/images/default_avatar.png'))
                 as ImageProvider,
-                child: Align(
+                child: const Align(
                   alignment: Alignment.bottomRight,
                   child: CircleAvatar(
                     radius: 20,
@@ -170,26 +172,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Name',
                 labelStyle: TextStyle(color: Colors.black),
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: _saveProfile,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Save Profile',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),

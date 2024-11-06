@@ -74,4 +74,5 @@ class _FollowingsScreenState extends State<FollowingsScreen> {
       ),
     );
   }
+
 }
